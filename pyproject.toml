@@ -8,6 +8,7 @@ authors = ["Thi <tiagoqueirozgoncalves100@gmail.com>"]
 python = "^3.10"
 Flask = "^2.2.2"
 gunicorn = "^20.1.0"
+Flask-WTF = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 httpx = "^0.23.0"
