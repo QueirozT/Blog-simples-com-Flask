@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="keywords" content="Flask, Programming, Python, Jinja2, Templates, HTML">
+    
+    <link rel="shortcut icon" href="https://flask.palletsprojects.com/en/2.2.x/_static/flask-icon.png">
+
+    {% if title %}
+        <title>{{ title }} - Blog Simples</title>
+    {% else %}
+        <title>Bem vindo ao Blog Simples</title>
+    {% endif %}
+
+</head>
+<body>
+    
+    <div>
+        Blog Simples: <a href="/index">Página Inicial</a>
+    </div>
+    
+    <hr>
+    {% block content %}{% endblock %}
+
+</body>
+</html>
