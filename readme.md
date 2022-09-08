@@ -5,7 +5,7 @@ Estou iniciando este projeto para entender melhor como o flask funciona, e aplic
 ## Como rodar?
 
 ```sh
-flask run
+python wsgi.py
 ```
 
 ou
