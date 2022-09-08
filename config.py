@@ -12,3 +12,5 @@ class Config(object):
         'SECRET_KEY', 
         default="você-nuna-vai-adivinhar"
     )
+
+    BABEL_DEFAULT_LOCALE ='pt_BR'
