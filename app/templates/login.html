@@ -7,16 +7,16 @@
         {{ form.hidden_tag() }}
         <p>
             {{ form.username.label }} <br>
-            {{ form.username(size=32) }}
+            {{ form.username(size=32, class="usuario") }}
         </p>
         <p>
             {{ form.password.label }} <br>
-            {{ form.password(size=32) }}
+            {{ form.password(size=32, class="senha") }}
         </p>
         <p>
-            {{ form.remember_me() }} {{ form.remember_me.label }}
+            {{ form.remember_me(id="lembrar") }} {{ form.remember_me.label }}
         </p>
-        <p>{{ form.submit() }}</p>
+        <p>{{ form.submit(id="enviar") }}</p>
     </form>
 
 {% endblock %}
