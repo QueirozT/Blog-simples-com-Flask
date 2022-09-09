@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 db = SQLAlchemy()
@@ -19,6 +20,14 @@ class User(db.Model):
 
     def __repr__(self):
         return f'User {self.username}'
+
+    def set_password(self, password):
+        """Gera um hash de senha para o usuário"""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Verifica se a senha é válida"""
+        return check_password_hash(self.password_hash, password)
 
 
 class Post(db.Model):
