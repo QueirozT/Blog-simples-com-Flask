@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import (
     Blueprint, current_app, flash, jsonify, redirect, render_template, 
     request, url_for
@@ -5,7 +6,7 @@ from flask import (
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
-from app.forms import LoginForm
+from app.forms import LoginForm, RegistrationForm
 from app.models import User
 
 
@@ -58,3 +59,20 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('blog.index'))
+
+
+@bp_blog.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('blog.index'))
+
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        current_app.db.session.add(user)
+        current_app.db.session.commit()
+        flash('Parabéns! Você se registrou com sucesso!')
+        return redirect(url_for('blog.login'))
+    
+    return render_template('register.html', title='Registro', form=form)
