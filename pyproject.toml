@@ -15,6 +15,7 @@ Flask-SQLAlchemy = "^2.5.1"
 Flask-Migrate = "^3.1.0"
 Werkzeug = "^2.2.2"
 Flask-Login = "^0.6.2"
+email-validator = "^1.2.1"
 
 [tool.poetry.dev-dependencies]
 httpx = "^0.23.0"
