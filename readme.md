@@ -11,6 +11,9 @@ Estou iniciando este projeto para entender melhor como o flask funciona, e aplic
 - Flask-Babel - Wrapper para manipulação de fuso e idioma
 - Flask-SQLAlchemy - Ferramenta de ORM
 - Flask-Migrate - Wrapper para migração de banco de dados
+- Werkzeug - Ferramenta responsável por gerar e validar Hashs
+- Flask-Login - Extenção para gerenciamento de autenticação
+- Email-Validator - Complemento para o flask-wtf
 
 
 ## Como rodar?

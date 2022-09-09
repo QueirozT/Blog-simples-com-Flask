@@ -21,7 +21,11 @@
     <div>
         Blog Simples: 
         <a href="{{ url_for('blog.index') }}">Página Inicial</a>
-        <a href="{{ url_for('blog.login') }}">Entrar</a>
+        {% if current_user.is_anonymous %}
+            <a href="{{ url_for('blog.login') }}">Entrar</a>
+        {% else %}
+            <a href="{{ url_for('blog.logout') }}">Sair</a>
+        {% endif %}
     </div>
     
     <hr>
