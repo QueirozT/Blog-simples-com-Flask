@@ -14,3 +14,9 @@ class Config(object):
     )
 
     BABEL_DEFAULT_LOCALE ='pt_BR'
+
+    SQLALCHEMY_DATABASE_URI = config(
+        'DATABASE_URL', 
+        default="sqlite:///../database.db"
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
