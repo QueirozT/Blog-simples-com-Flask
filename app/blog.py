@@ -1,4 +1,4 @@
-from crypt import methods
+from datetime import datetime
 from flask import (
     Blueprint, current_app, flash, jsonify, redirect, render_template, 
     request, url_for
@@ -6,7 +6,7 @@ from flask import (
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
-from app.forms import LoginForm, RegistrationForm
+from app.forms import EditProfileForm, LoginForm, RegistrationForm
 from app.models import User
 
 
@@ -76,3 +76,40 @@ def register():
         return redirect(url_for('blog.login'))
     
     return render_template('register.html', title='Registro', form=form)
+
+
+@bp_blog.route('/user/<username>', methods=['GET'])
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = [
+        {'author': user, 'body': 'Test post #1'},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html', user=user, posts=posts)
+
+
+@bp_blog.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        current_app.db.session.commit()
+
+
+@bp_blog.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        current_app.db.session.commit()
+        flash('Suas alterações foram salvas!')
+        return redirect(url_for('blog.edit_profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+
+    return render_template(
+        'edit_profile.html', title='Editar Perfil', form=form
+    )
