@@ -1,0 +1,11 @@
+ {% extends "base.html" %}
+
+ {% block content %}
+
+    <h1>Um erro inesperado aconteceu</h1>
+
+    <p>Os administradores foram notificados, Desculpe pelo inconveniente.</p>
+
+    <p><a href="{{ url_for('blog.index') }}">Voltar a página inicial</a></p>
+
+ {% endblock %}

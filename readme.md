@@ -50,3 +50,13 @@ Após acessar o shell do flask, você tem acesso a instância do app e aos model
 >>> from app.models import User, Post
 >>> db = app.db
 ```
+
+## Como rodar um servidor de email local para receber os erros?
+
+Para rodar, basta executar o comando a baixo que o python gera automaticamente um servidor local.
+
+```sh
+python -m smtpd -n -c DebuggingServer localhost:8025
+```
+
+As configurações para usar este serviço já estão definidas no env.exemplo, caso queira usar algum serviço dedicado, basta trocar os dados no seu arquivo de variáveis de ambiente.
