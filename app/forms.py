@@ -54,3 +54,7 @@ class EditProfileForm(FlaskForm):
                 raise ValidationError(
                     'Por favor, use um nome de usuário diferente.'
                 )
+
+
+class EmptyForm(FlaskForm):
+    submit = SubmitField('Enviar')

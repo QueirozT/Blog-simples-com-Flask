@@ -6,7 +6,7 @@ from flask import (
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
-from app.forms import EditProfileForm, LoginForm, RegistrationForm
+from app.forms import EditProfileForm, EmptyForm, LoginForm, RegistrationForm
 from app.models import User
 
 
@@ -86,7 +86,8 @@ def user(username):
         {'author': user, 'body': 'Test post #1'},
         {'author': user, 'body': 'Test post #2'}
     ]
-    return render_template('user.html', user=user, posts=posts)
+    form = EmptyForm()
+    return render_template('user.html', user=user, posts=posts, form=form)
 
 
 @bp_blog.before_request
@@ -113,3 +114,44 @@ def edit_profile():
     return render_template(
         'edit_profile.html', title='Editar Perfil', form=form
     )
+
+
+
+@bp_blog.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash(f'Usuário {username} não encontrado')
+            return redirect(url_for('blog.index'))
+        if user == current_user:
+            flash('Você não pode seguir a sim mesmo.')
+            return redirect(url_for('blog.index'))
+        current_user.follow(user)
+        current_app.db.session.commit()
+        flash(f'Você está seguindo {username}!')
+        return redirect(url_for('blog.user', username=username))
+    else:
+        return redirect(url_for('blog.index'))
+
+
+@bp_blog.route('/unfollow/<username>', methods=['POST'])
+@login_required
+def unfollow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash('Usuário {username} não encontrado')
+            return redirect(url_for('blog.index'))
+        if user == current_user:
+            flash('Você não pode parar de seguir a sim mesmo.')
+            return redirect(url_for('blog.user', username=username))
+        current_user.unfollow(user)
+        current_app.db.session.commit()
+        flash(f'Você não está mais seguindo {username}')
+        return redirect(url_for('blog.user', username=username))
+    else:
+        return redirect(url_for('blog.index'))
