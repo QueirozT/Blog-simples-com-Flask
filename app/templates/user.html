@@ -54,4 +54,11 @@
 
     {% endfor %}
 
+    {% if prev_url %}
+    <a href="{{ prev_url }}">Posts mais recentes</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">Posts mais antigos</a>
+    {% endif %}
+
 {% endblock %}
