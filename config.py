@@ -32,3 +32,6 @@ class Config(object):
         cast=lambda v: [s.strip() for s in v.split(',')], 
         default=[]
     )
+
+
+    POSTS_PER_PAGE = 20
