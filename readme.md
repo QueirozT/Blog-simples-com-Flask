@@ -12,9 +12,10 @@ Estou iniciando este projeto para entender melhor como o flask funciona, e aplic
 - Flask-SQLAlchemy - Ferramenta de ORM
 - Flask-Migrate - Wrapper para migração de banco de dados
 - Werkzeug - Ferramenta responsável por gerar e validar Hashs
-- Flask-Login - Extenção para gerenciamento de autenticação
+- Flask-Login - Extensão para gerenciamento de autenticação
 - Email-Validator - Complemento para o flask-wtf
-
+- Flask-Mail - Extensão para trabalhar com emails
+- pyjwt - Biblioteca do python que gera tokens (Json Web Tokens)
 
 ## Como rodar?
 
