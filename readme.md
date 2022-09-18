@@ -47,9 +47,9 @@ flask shell
 
 Após acessar o shell do flask, você tem acesso a instância do app e aos models, o que te permite fazer todos os testes e acessar o banco de dados.
 
-```sh
->>> from app.models import User, Post
->>> db = app.db
+```py
+from app.models import User, Post
+db = app.db
 ```
 
 ## Como rodar um servidor de email local para receber os erros?

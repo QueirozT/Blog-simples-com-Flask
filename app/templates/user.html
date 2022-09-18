@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <table>
+    <table class="table">
         <tr style="text-align: top;">
             <td><img src="{{ user.avatar(128) }}"></td>
             <td>
@@ -31,14 +31,14 @@
                     <p>
                         <form action="{{ url_for('blog.follow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
-                            {{ form.submit(value='Seguir', style='cursor: pointer;') }}
+                            {{ form.submit(value='Seguir', style="cursor: pointer;", class="btn btn-primary") }}
                         </form>
                     </p>
                 {% else %}
                     <p>
                         <form action="{{ url_for('blog.unfollow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
-                            {{ form.submit(value='Parar de seguir', style='cursor: pointer;') }}
+                            {{ form.submit(value='Parar de seguir', style="cursor: pointer;", class="btn btn-primary") }}
                         </form>
                     </p>
                 {% endif %}
@@ -54,11 +54,19 @@
 
     {% endfor %}
 
-    {% if prev_url %}
-    <a href="{{ prev_url }}">Posts mais recentes</a>
-    {% endif %}
-    {% if next_url %}
-    <a href="{{ next_url }}">Posts mais antigos</a>
-    {% endif %}
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                <a class="page-link" href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Postagens recentes
+                </a>
+            </li>
+            <li class="page-item {% if not next_url %} disabled {% endif %}">
+                <a class="page-link" href="{{ next_url or '#' }}">
+                    Postagens antigas <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
 {% endblock %}
