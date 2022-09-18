@@ -3,26 +3,27 @@
 {% block content %}
 
     <h1>Entrar</h1>
+
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
             {{ form.username.label }} <br>
-            {{ form.username(size=32, class="usuario") }}
+            {{ form.username(size=32, class="form-control", placeholder="Insira seu e-mail") }}
             {% for error in form.username.errors %}
                 <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </p>
         <p>
             {{ form.password.label }} <br>
-            {{ form.password(size=32, class="senha") }}
+            {{ form.password(size=32, class="form-control", placeholder="Insira sua senha") }}
             {% for error in form.password.errors %}
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </p>
-        <p>
-            {{ form.remember_me(id="lembrar") }} {{ form.remember_me.label }}
+        <p class="custom-control custom-checkbox">
+            {{ form.remember_me(class="custom-control-input") }} {{ form.remember_me.label(class="custom-control-label") }}
         </p>
-        <p>{{ form.submit(id="enviar") }}</p>
+        <p>{{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}</p>
     </form>
 
     <p>
