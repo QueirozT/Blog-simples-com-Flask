@@ -16,6 +16,7 @@ Estou iniciando este projeto para entender melhor como o flask funciona, e aplic
 - Email-Validator - Complemento para o flask-wtf
 - Flask-Mail - Extensão para trabalhar com emails
 - pyjwt - Biblioteca do python que gera tokens (Json Web Tokens)
+- Flask-Moment - Wrapper da biblioteca moment.js para tratamento de datas
 
 ## Como rodar?
 
@@ -61,3 +62,23 @@ python -m smtpd -n -c DebuggingServer localhost:8025
 ```
 
 As configurações para usar este serviço já estão definidas no env.exemplo, caso queira usar algum serviço dedicado, basta trocar os dados no seu arquivo de variáveis de ambiente.
+
+## Como usar o flask-moment?
+
+- Primeiro passo; precisa configurar o contexto do app como foi feito no ```__init__.py``` 
+- Segundo passo; precisa inserir o ```{{ moment.include_moment() }}``` nos templates que precisar, para que o moments seja carregado.
+- Terceiro passo; basta usar o jinja2 para invocar as datas e formatar através do ```{{ moment(data).fromNow() }}```
+- Por último; pode acrescentar um ```{{ moment.locale(auto_detect=True) }}``` para detectar automaticamente o idioma do navegador.
+
+
+Formatos de datas suportados:
+```py
+moment('2021-06-28T21:45:23Z').format('L') # "06/28/2021"
+moment('2021-06-28T21:45:23Z').format('LL') # "June 28, 2021"
+moment('2021-06-28T21:45:23Z').format('LLL') # "June 28, 2021 2:45 PM"
+moment('2021-06-28T21:45:23Z').format('LLLL') # "Monday, June 28, 2021 2:45 PM"
+moment('2021-06-28T21:45:23Z').format('dddd') # "Monday"
+moment('2021-06-28T21:45:23Z').fromNow() # "7 hours ago"
+moment('2021-06-28T21:45:23Z').calendar() # "Today at 2:45 PM"
+```
+
