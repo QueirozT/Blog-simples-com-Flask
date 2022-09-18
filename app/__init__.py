@@ -9,6 +9,8 @@ from pathlib import Path
 from .blog import bp_blog
 from .errors import bp_errors
 from .models import config as config_db
+from .email import config as config_mail
+
 
 def create_app():
     app = Flask(__name__)
@@ -22,6 +24,9 @@ def create_app():
     # Configurando o Migrate para o SQLAlchemy
     config_db(app)
     migrate = Migrate(app, app.db)
+
+    # Configurando o envio dos emails 
+    config_mail(app)
 
     # Registrando as blueprints
     app.register_blueprint(bp_blog)
