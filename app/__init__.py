@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 from flask_babel import Babel
 from flask_migrate import Migrate
+from flask_moment import Moment
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 from pathlib import Path
@@ -20,6 +21,9 @@ def create_app():
     
     # Configurando o Babel para tradução
     babel = Babel(app)
+
+    # Configurando o flask Moment para tratamento de datas
+    moment = Moment(app)
 
     # Configurando o Migrate para o SQLAlchemy
     config_db(app)
