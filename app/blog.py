@@ -7,10 +7,10 @@ from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from app.forms import (
-    EditProfileForm, EmptyForm, LoginForm, PostForm, RegistrationForm
+    EditProfileForm, EmptyForm, LoginForm, PostForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
 )
 from app.models import User, Post
-
+from app.email import send_email, send_password_reset_email
 
 bp_blog = Blueprint('blog', __name__)
 
@@ -209,3 +209,39 @@ def explore():
         'index.html', title='Explorar', posts=posts.items, 
         next_url=next_url, prev_url=prev_url
     )
+
+
+@bp_blog.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('blog.index'))
+    
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        flash('Confira em seu email as instruções para resetar sua senha.')
+        return redirect(url_for('blog.login'))
+    
+    return render_template(
+        'reset_password_request.html', title='Redefinir senha', form=form
+    )
+
+
+@bp_blog.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('blog.index'))
+    
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('blog.index'))
+    
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        current_app.db.session.commit()
+        flash('Sua senha foi redefinida!')
+        return redirect(url_for('blog.login'))
+    return render_template('reset_password.html', form=form)
