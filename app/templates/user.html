@@ -13,7 +13,7 @@
                 {% endif %}
                 
                 {% if user.last_seen %}
-                    <p>Visto por ultimo em - {{ moment(user.last_seen).calendar(refresh=True) }}</p>
+                    <p>Visto por ultimo - {{ moment(user.last_seen).calendar(refresh=True) }}</p>
                 {% endif %}
 
                 <p>
