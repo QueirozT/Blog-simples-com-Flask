@@ -9,7 +9,8 @@
             <a href="{{ url_for('blog.user', username=post.author.username) }}">
                 {{ post.author.username }}
             </a>
-            Disse: <br> 
+            Disse - {{ moment(post.timestamp).fromNow(refresh=True) }}:
+            <br> 
             {{ post.body }}
         </td>
     </tr>
