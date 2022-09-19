@@ -1,16 +1,14 @@
 from datetime import datetime
 from flask import (
-    Blueprint, current_app, flash, jsonify, redirect, render_template, 
+    Blueprint, current_app, flash, redirect, render_template, 
     request, url_for
 )
-from flask_login import current_user, login_required, login_user, logout_user
-from werkzeug.urls import url_parse
+from flask_login import current_user, login_required
 
 from app.forms import (
-    EditProfileForm, EmptyForm, LoginForm, PostForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
+    EditProfileForm, EmptyForm, PostForm
 )
 from app.models import User, Post
-from app.email import send_email, send_password_reset_email
 
 bp_blog = Blueprint('blog', __name__)
 
@@ -45,53 +43,6 @@ def index():
         'index.html', title='Página Inicial', form=form, 
         posts=posts.items, next_url=next_url, prev_url=prev_url
     )
-
-
-@bp_blog.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('blog.index'))
-
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-
-        if user is None or not user.check_password(form.password.data):
-            flash('Usuário ou senha inválidos')
-            return redirect(url_for('blog.login'))
-        
-        login_user(user, remember=form.remember_me.data)
-        
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('blog.index')
-
-        return redirect(next_page)
-    
-    return render_template('login.html', title='Entrar', form=form)
-
-
-@bp_blog.route('/logout', methods=['GET'])
-def logout():
-    logout_user()
-    return redirect(url_for('blog.index'))
-
-
-@bp_blog.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('blog.index'))
-
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        current_app.db.session.add(user)
-        current_app.db.session.commit()
-        flash('Parabéns! Você se registrou com sucesso!')
-        return redirect(url_for('blog.login'))
-    
-    return render_template('register.html', title='Registro', form=form)
 
 
 @bp_blog.route('/user/<username>', methods=['GET'])
@@ -209,39 +160,3 @@ def explore():
         'index.html', title='Explorar', posts=posts.items, 
         next_url=next_url, prev_url=prev_url
     )
-
-
-@bp_blog.route('/reset_password_request', methods=['GET', 'POST'])
-def reset_password_request():
-    if current_user.is_authenticated:
-        return redirect(url_for('blog.index'))
-    
-    form = ResetPasswordRequestForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            send_password_reset_email(user)
-        flash('Confira em seu email as instruções para resetar sua senha.')
-        return redirect(url_for('blog.login'))
-    
-    return render_template(
-        'reset_password_request.html', title='Redefinir senha', form=form
-    )
-
-
-@bp_blog.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('blog.index'))
-    
-    user = User.verify_reset_password_token(token)
-    if not user:
-        return redirect(url_for('blog.index'))
-    
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        user.set_password(form.password.data)
-        current_app.db.session.commit()
-        flash('Sua senha foi redefinida!')
-        return redirect(url_for('blog.login'))
-    return render_template('reset_password.html', form=form)
