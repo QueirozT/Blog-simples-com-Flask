@@ -17,7 +17,7 @@ def config(app):
     app.db = db
 
     login.init_app(app)
-    login.login_view = 'blog.login'
+    login.login_view = 'auth.login'
     login.login_message = 'Faça login para acessar esta página.'
     login.login_message_category = 'info'
 
