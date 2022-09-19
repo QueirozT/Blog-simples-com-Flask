@@ -27,11 +27,11 @@
     </form>
 
     <p>
-        Novo aqui? <a href="{{ url_for('blog.register') }}">Clique para se registrar!</a>
+        Novo aqui? <a href="{{ url_for('auth.register') }}">Clique para se registrar!</a>
     </p>
 
     <p>
-        Esqueceu sua senha? <a href="{{ url_for('blog.reset_password_request') }}">Clique aqui para redefini-la!</a>
+        Esqueceu sua senha? <a href="{{ url_for('auth.reset_password_request') }}">Clique aqui para redefini-la!</a>
     </p>
 
 {% endblock %}
