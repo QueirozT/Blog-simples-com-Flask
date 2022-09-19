@@ -7,27 +7,34 @@ import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 from pathlib import Path
 
+from app.auth import bp_auth
+from app.errors import bp_errors
 from .blog import bp_blog
-from .errors import bp_errors
-from .models import config as config_db
+
 from .email import config as config_mail
+from .models import config as config_db
 
 
-def create_app():
+babel = Babel()
+migrate = Migrate()
+moment = Moment()
+
+
+def create_app(config_class=Config):
     app = Flask(__name__)
 
     # Carregando as configurações
-    app.config.from_object(Config)
+    app.config.from_object(config_class)
     
     # Configurando o Babel para tradução
-    babel = Babel(app)
+    babel.init_app(app)
 
     # Configurando o flask Moment para tratamento de datas
-    moment = Moment(app)
+    moment.init_app(app)
 
     # Configurando o Migrate para o SQLAlchemy
     config_db(app)
-    migrate = Migrate(app, app.db)
+    migrate.init_app(app, app.db)
 
     # Configurando o envio dos emails 
     config_mail(app)
@@ -35,23 +42,25 @@ def create_app():
     # Registrando as blueprints
     app.register_blueprint(bp_blog)
     app.register_blueprint(bp_errors)
+    app.register_blueprint(bp_auth, url_prefix='/auth')
 
     # Configurando o servidor de email
-    if not app.debug and app.config['MAIL_SERVER']:
-        auth = None
-        if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
-            auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        secure = None
-        if app.config['MAIL_USE_TLS']:
-            secure = ()
-        mail_handler = SMTPHandler(
-            mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
-            fromaddr=f'no-reply@{app.config["MAIL_SERVER"]}',
-            toaddrs=app.config['ADMINS'], subject='Falha no Blog',
-            credentials=auth, secure=secure
-        )
-        mail_handler.setLevel(logging.ERROR)
-        app.logger.addHandler(mail_handler)
+    if not app.debug and not app.testing:
+        if app.config['MAIL_SERVER']:
+            auth = None
+            if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
+                auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+            secure = None
+            if app.config['MAIL_USE_TLS']:
+                secure = ()
+            mail_handler = SMTPHandler(
+                mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
+                fromaddr=f'no-reply@{app.config["MAIL_SERVER"]}',
+                toaddrs=app.config['ADMINS'], subject='Falha no Blog',
+                credentials=auth, secure=secure
+            )
+            mail_handler.setLevel(logging.ERROR)
+            app.logger.addHandler(mail_handler)
 
     # Configurando o arquivo de log
     PATH_LOGS = Path.joinpath(
