@@ -40,17 +40,24 @@ flask db upgrade
 
 ## Como acessar a instância do app e testar o banco de dados?
 
-Primeiro, deve entrar no shell.
-
+Para ter acesso aos recursos do banco de dados e testar, basta usar.
 ```sh
 flask shell
 ```
 
-Após acessar o shell do flask, você tem acesso a instância do app e aos models, o que te permite fazer todos os testes e acessar o banco de dados.
-
+A configuração foi predefinida no ```wsgi.py``` o que dá acesso direto as instãncias de "app", "db", "User" e "Post".
 ```py
-from app.models import User, Post
-db = app.db
+>>> app
+<Flask 'app'>
+
+>>> db
+<SQLAlchemy engine=sqlite:///>
+
+>>> User
+<class 'app.models.User'>
+
+>>> Post
+<class 'app.models.Post'>
 ```
 
 ## Como rodar um servidor de email local para receber os erros?
