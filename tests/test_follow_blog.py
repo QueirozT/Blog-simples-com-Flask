@@ -1,22 +1,7 @@
-import pytest
 from datetime import datetime, timedelta
 
-from app import create_app
 from app.models import User, Post
-
-
-@pytest.fixture
-def app():    
-    app = create_app()
-    app.testing = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
-
-    app_ctx = app.app_context()
-    app_ctx.push()
-    
-    app.db.create_all()
-
-    return app
+from tests.fixtures import app
 
 
 def create_user(name):
@@ -61,7 +46,7 @@ def test_de_follower_deve_retornar_vazio(app):
 def test_de_followed_deve_retornar_u2(app):
     u1 = User.query.filter_by(username='usuario1').first()
     u2 = User.query.filter_by(username='usuario2').first()
-    
+
     u1.follow(u2)
     app.db.session.commit()
 
