@@ -89,3 +89,32 @@ moment('2021-06-28T21:45:23Z').fromNow() # "7 hours ago"
 moment('2021-06-28T21:45:23Z').calendar() # "Today at 2:45 PM"
 ```
 
+## Como rodar este projeto usando o docker?
+
+Para começar, o docker precisa estar instalado.
+
+Como este projeto é extremamente simples, montei um esquema de imagem equivalente. tudo que precisa para funcionar é executar os comandos a seguir:
+
+1 - Para criar a imagem a partir dos arquivos fornecidos, basta rodar o comando:
+```sh
+docker build -t blog-simples:latest .
+```
+
+2 - Após criar a imagem, use o comando a baixo para rodar o projeto:
+- Após rodar o projeto, pode acessa-lo através do endereço: http://localhost:8000
+
+```sh
+docker run -d --rm --name blog-simples -p 8000:8000 -v $PWD:/home/blog-simples/ blog-simples:latest
+```
+
+3 - Para ver os logs do servidor, basta usar o comando a baixo ou trocar a flag "-d" por "-it" do segundo comando:
+```sh
+docker logs blog-simples
+```
+
+4 - Para finalizar a execução, basta usar o comando:
+```sh
+docker stop blog-simples
+```
+
+Se quiser instalar algum pacote diferente, basta acrescentar ao requirements.txt e rodar o primeiro comando novamente.
