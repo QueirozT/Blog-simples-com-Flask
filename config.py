@@ -35,3 +35,10 @@ class Config(object):
 
 
     POSTS_PER_PAGE = 20
+
+
+class TestConfig(object):
+    TESTING = True
+    DEBUG = True
+
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///'
