@@ -40,6 +40,8 @@ class Config(object):
 class TestConfig(object):
     TESTING = True
     DEBUG = True
+    WTF_CSRF_ENABLED = False
+    ADMINS = ['admin@email.com',]
 
     SECRET_KEY = "você-nunca-vai-adivinhar"
 
