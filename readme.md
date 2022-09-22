@@ -117,4 +117,10 @@ docker logs blog-simples
 docker stop blog-simples
 ```
 
-Se quiser instalar algum pacote diferente, basta acrescentar ao requirements.txt e rodar o primeiro comando novamente.
+- Se quiser instalar algum pacote diferente, basta acrescentar ao requirements.txt e rodar o primeiro comando novamente.
+
+
+Para testar os serviços de email, basta executar este comando enquanto o docker estiver ativo:
+```sh
+docker exec -it blog-simples python -m smtpd -n -c DebuggingServer localhost:8025
+```
