@@ -10,7 +10,7 @@ class Config(object):
     
     SECRET_KEY = config(
         'SECRET_KEY', 
-        default="você-nuna-vai-adivinhar"
+        default="você-nunca-vai-adivinhar"
     )
 
     BABEL_DEFAULT_LOCALE ='pt_BR'
@@ -34,4 +34,17 @@ class Config(object):
     )
 
 
+    POSTS_PER_PAGE = 20
+
+
+class TestConfig(object):
+    TESTING = True
+    DEBUG = True
+
+    SECRET_KEY = "você-nunca-vai-adivinhar"
+
+    BABEL_DEFAULT_LOCALE ='pt_BR'
+
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+    
     POSTS_PER_PAGE = 20
