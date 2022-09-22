@@ -35,9 +35,16 @@ def modul_app():
 def testing_client():
     app = create_app(TestConfig)
 
+    request_context = app.test_request_context().push()
+
     with app.test_client() as testing_client:
         with app.app_context():
+            db.create_all()
+
             yield testing_client
+
+            db.drop_all()
+            db.session.remove()
 
 
 def create_user(name):

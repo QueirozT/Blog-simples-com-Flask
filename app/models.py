@@ -100,7 +100,7 @@ class User(UserMixin, db.Model):
             )['reset_password']
         except:
             return
-        return User.query.get(id)
+        return User.query.filter_by(id=id).first()
 
 
 class Post(db.Model):
