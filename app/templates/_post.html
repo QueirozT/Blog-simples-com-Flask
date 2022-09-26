@@ -6,9 +6,11 @@
             </a>
         </td>
         <td>
-            <a href="{{ url_for('blog.user', username=post.author.username) }}">
-                {{ post.author.username }}
-            </a>
+            <span class="user_popup d-inline-block">
+                <a href="{{ url_for('blog.user', username=post.author.username) }}">
+                    {{ post.author.username }}
+                </a>
+            </span>
             Disse - {{ moment(post.timestamp).fromNow(refresh=True) }}:
             <br> 
             {{ post.body }}
