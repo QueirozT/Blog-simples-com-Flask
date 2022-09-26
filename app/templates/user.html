@@ -6,19 +6,19 @@
         <div class="d-flex justify-content-start align-items-center">
             <div class="mr-4"><img src="{{ user.avatar(160) }}"></div>
             <div>
-                <h1>Usuário - {{ user.username }}</h1>
+                <h1>{{ user.username }}</h1>
 
                 {% if user.about_me %}
-                    <p>Sobre mim - {{ user.about_me }}</p>
+                    <p>Sobre mim: {{ user.about_me }}</p>
                 {% endif %}
                 
                 {% if user.last_seen %}
-                    <p>Visto por ultimo - {{ moment(user.last_seen).calendar(refresh=True) }}</p>
+                    <p>Visto por último: {{ moment(user.last_seen).calendar(refresh=True) }}</p>
                 {% endif %}
 
                 <p>
-                    {{ user.followers.count() }} seguidores, 
-                    {{ user.followed.count() }} seguindo.
+                    seguidores {{ user.followers.count() }} - 
+                    seguindo {{ user.followed.count() }}
                 </p>
 
                 {% if user == current_user %}
