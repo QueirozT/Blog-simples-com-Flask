@@ -19,7 +19,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = config(
         'DATABASE_URL', 
         default="sqlite:///../database.db"
-    ).replace('postgres://', 'postgresqlql://')
+    ).replace('postgres://', 'postgresql://')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
