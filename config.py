@@ -1,3 +1,4 @@
+from email.policy import default
 from decouple import config
 
 
@@ -18,7 +19,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = config(
         'DATABASE_URL', 
         default="sqlite:///../database.db"
-    )
+    ).replace('postgres://', 'postgresql://')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
@@ -32,6 +33,8 @@ class Config(object):
         cast=lambda v: [s.strip() for s in v.split(',')], 
         default=[]
     )
+
+    LOG_TO_STDOUT = config('LOG_TO_STDOUT', cast=bool, default=True)
 
 
     POSTS_PER_PAGE = 20
