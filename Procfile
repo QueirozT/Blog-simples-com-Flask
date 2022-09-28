@@ -1,3 +1,3 @@
-web: gunicorn wsgi:app
+web: flask db migrate && gunicorn wsgi:app
 # worker: CÓDIGO DO SEU WORKER
-release: flask db migrate
+# release: flask db migrate
