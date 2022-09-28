@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /home/blog-simples
 
-COPY requirements.txt requirements.txt
+COPY . .
 RUN pip install -r requirements.txt -U
 
 EXPOSE 8000
