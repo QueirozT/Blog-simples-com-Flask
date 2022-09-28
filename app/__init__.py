@@ -63,18 +63,23 @@ def create_app(config_class=Config):
             app.logger.addHandler(mail_handler)
 
     # Configurando o arquivo de log
-    PATH_LOGS = Path.joinpath(
-        Path(__file__).parent.parent, 'logs/'
-    )
-    Path.mkdir(PATH_LOGS, exist_ok=True)
-    file_handler = RotatingFileHandler(
-        f'{PATH_LOGS}/blog.log', maxBytes=10240, backupCount=10
-    )
-    file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
-    ))
-    file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
+    if app.config['LOG_TO_STDOUT']:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.INFO)
+        app.logger.addHandler(stream_handler)
+    else:
+        PATH_LOGS = Path.joinpath(
+            Path(__file__).parent.parent, 'logs/'
+        )
+        Path.mkdir(PATH_LOGS, exist_ok=True)
+        file_handler = RotatingFileHandler(
+            f'{PATH_LOGS}/blog.log', maxBytes=10240, backupCount=10
+        )
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+        ))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
     app.logger.info('Inicialização do Blog')
 
