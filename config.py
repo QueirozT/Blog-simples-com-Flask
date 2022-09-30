@@ -23,15 +23,15 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-    MAIL_SERVER = config('MAIL_SERVER')
-    MAIL_PORT = config('MAIL_PORT', cast=int, default=25)
+    MAIL_SERVER = config('MAIL_SERVER', default='localhost')
+    MAIL_PORT = config('MAIL_PORT', cast=int, default='8025')
     MAIL_USE_TLS = config('MAIL_USE_TLS', cast=bool, default=False)
-    MAIL_USERNAME = config('MAIL_USERNAME')
-    MAIL_PASSWORD = config('MAIL_PASSWORD')
+    MAIL_USERNAME = config('MAIL_USERNAME', default=None)
+    MAIL_PASSWORD = config('MAIL_PASSWORD', default=None)
     ADMINS = config(
         'ADMINS', 
         cast=lambda v: [s.strip() for s in v.split(',')], 
-        default=[]
+        default="email@exemplo.com,"
     )
 
     LOG_TO_STDOUT = config('LOG_TO_STDOUT', cast=bool, default=True)
@@ -52,4 +52,6 @@ class TestConfig(object):
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///'
     
+    LOG_TO_STDOUT = True
+
     POSTS_PER_PAGE = 20
