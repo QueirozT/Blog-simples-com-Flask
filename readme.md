@@ -18,17 +18,44 @@ Estou iniciando este projeto para entender melhor como o flask funciona, e aplic
 - pyjwt - Biblioteca do python que gera tokens (Json Web Tokens)
 - Flask-Moment - Wrapper da biblioteca moment.js para tratamento de datas
 
+## Como instalar as dependências do projeto?
+
+- Poetry:
+
+Eu usei poetry para gerenciar este projeto.
+
+Se você quiser usar poetry também, basta seguir a documentação oficial deles para instalar em sua plataforma > [Poetry Docs](https://python-poetry.org/docs/#installation).
+
+Com o Poetry instalado, basta entrar no diretório clonado deste projeto e rodar:
+```sh
+poetry install
+```
+
+E para ativar o ambiente virtual:
+```sh
+poetry shell
+```
+
+- Pip:
+
+Se não quiser usar o poetry, pode instalar o requirements.txt em seu ambiente virtual:
+```sh
+pip install -r requirements.txt
+```
+
 ## Como rodar?
 
 ```sh
 python wsgi.py
 ```
+- pode acessa-lo através do endereço: http://localhost:5000
 
 ou
 
 ```sh
 gunicorn wsgi:app
 ```
+- pode acessa-lo através do endereço: http://localhost:8000
 
 ## Como migrar o banco de dados?
 
@@ -68,7 +95,8 @@ Para rodar, basta executar o comando a baixo que o python gera automaticamente u
 python -m smtpd -n -c DebuggingServer localhost:8025
 ```
 
-As configurações para usar este serviço já estão definidas no env.exemplo, caso queira usar algum serviço dedicado, basta trocar os dados no seu arquivo de variáveis de ambiente.
+- As configurações para usar este serviço já estão predefinidas. 
+- caso queira usar algum serviço de email dedicado, basta trocar os valores nas variáveis de ambiente no seu arquivo .env.
 
 ## Como usar o flask-moment?
 
@@ -120,7 +148,7 @@ docker stop blog-simples
 - Se quiser instalar algum pacote diferente, basta acrescentar ao requirements.txt e rodar o primeiro comando novamente.
 
 
-Para testar os serviços de email, basta executar este comando enquanto o docker estiver ativo:
+Se quiser testar os serviços de email com o docker, basta executar este comando enquanto o projeto estiver rodando:
 ```sh
 docker exec -it blog-simples python -m smtpd -n -c DebuggingServer localhost:8025
 ```
