@@ -54,19 +54,6 @@
 
     {% endfor %}
 
-    <nav aria-label="...">
-        <ul class="pagination">
-            <li class="page-item {% if not prev_url %} disabled {% endif %}">
-                <a class="page-link" href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span> Postagens recentes
-                </a>
-            </li>
-            <li class="page-item {% if not next_url %} disabled {% endif %}">
-                <a class="page-link" href="{{ next_url or '#' }}">
-                    Postagens antigas <span aria-hidden="true">&rarr;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    {% include '_nav_posts.html' %}
 
 {% endblock %}
