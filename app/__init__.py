@@ -80,7 +80,7 @@ def create_app(config_class=Config):
         ))
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
-    app.logger.setLevel(logging.INFO)
-    app.logger.info('Inicialização do Blog')
+        app.logger.setLevel(logging.INFO)
+        app.logger.info('Inicialização do Blog')
 
     return app
