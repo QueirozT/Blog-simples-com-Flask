@@ -7,6 +7,11 @@
     <form action="" method="post">
         {{ form.hidden_tag() }}
         
+        <p class="pb-4 pt-2">
+            <label>Foto de Perfil</label><br>
+            Você pode trocar sua foto de perfil no 
+            <abbr title="O Gravatar é um serviço gratuito que permite que você compartilhe sua foto de perfil com milhões de pessoas, tudo que você precisa fazer é criar uma conta com seu e-mail e adicionar um avatar."><a href="https://br.gravatar.com/" target="_blank">Gravatar</a></abbr>
+        </p>
         <p>
             {{ form.username.label }} <br>
             {{ form.username(size=32, class="form-control") }} <br>
