@@ -77,11 +77,13 @@
             
             {% block content %}{% endblock %}
     </div>
-        
-        <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-        {{ moment.include_moment() }}
-        {{ moment.locale('pt-BR') }}
-        <script src="{{ url_for('static', filename='js/popover.js') }}"></script>
-    </body>
+
+    <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    {{ moment.include_moment() }}
+    {{ moment.locale('pt-BR') }}
+    <script src="{{ url_for('static', filename='js/popover.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/contagem_textarea.js') }}"></script>
+
+</body>
 </html>

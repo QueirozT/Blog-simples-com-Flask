@@ -4,21 +4,17 @@ from decouple import config
 
 class Config(object):
     DEBUG = config(
-        'DEBUG',
-        cast=bool,
-        default=True
+        'DEBUG', cast=bool, default=True
     )
     
     SECRET_KEY = config(
-        'SECRET_KEY', 
-        default="você-nunca-vai-adivinhar"
+        'SECRET_KEY', default="você-nunca-vai-adivinhar"
     )
 
     BABEL_DEFAULT_LOCALE ='pt_BR'
 
     SQLALCHEMY_DATABASE_URI = config(
-        'DATABASE_URL', 
-        default="sqlite:///../database.db"
+        'DATABASE_URL', default="sqlite:///../database.db"
     ).replace('postgres://', 'postgresql://')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -34,7 +30,7 @@ class Config(object):
         default="email@exemplo.com,"
     )
 
-    LOG_TO_STDOUT = config('LOG_TO_STDOUT', cast=bool, default=True)
+    LOG_TO_STDOUT = config('LOG_TO_STDOUT', cast=bool, default=False)
 
 
     POSTS_PER_PAGE = 20
