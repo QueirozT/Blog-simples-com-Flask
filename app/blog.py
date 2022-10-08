@@ -84,7 +84,7 @@ def before_request():
 def edit_profile():
     form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
-        current_user.username = form.username.data
+        current_user.username = form.username.data.strip()
         current_user.about_me = form.about_me.data
         current_app.db.session.commit()
         flash('Suas alterações foram salvas!')
