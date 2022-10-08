@@ -7,26 +7,30 @@
     <form action="" method="post">
         {{ form.hidden_tag() }}
         
-        <p class="pb-4 pt-2">
+        <div class="pb-4 pt-2">
             <label>Foto de Perfil</label><br>
             Você pode trocar sua foto de perfil no 
             <abbr title="O Gravatar é um serviço gratuito que permite que você compartilhe sua foto de perfil com milhões de pessoas, tudo que você precisa fazer é criar uma conta com seu e-mail e adicionar um avatar."><a href="https://br.gravatar.com/" target="_blank">Gravatar</a></abbr>
-        </p>
-        <p>
+        </div>
+        <div>
             {{ form.username.label }} <br>
             {{ form.username(size=32, class="form-control") }} <br>
             {% for error in form.username.errors %}
                 <span style="color: red;">{{ error }}</span>
             {% endfor %}
-        </p>
-        <p>
+        </div>
+        <div class="md-form mb-4 pink-textarea active-pink-textarea">
             {{ form.about_me.label }} <br>
-            {{ form.about_me(cols=50, rows=4, class="form-control") }} <br>
+            {{ form.about_me(cols=50, rows=4, class="form-control") }}
+            <p class="text-right mb-0" for="post">
+                <span id="current">0</span>
+                <span id="maximum">/ 200</span>
+            </p>
             {% for error in form.about_me.errors %}
                 <span style="color: red;">{{ error }}</span>
             {% endfor %}
-        </p>
-        <p>{{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}</p>
+        </div>
+        <div>{{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}</div>
     </form>
 
 {% endblock %}
