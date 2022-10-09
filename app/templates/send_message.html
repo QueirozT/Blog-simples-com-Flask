@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+    <div class="container">
+        <h1>Mensagem para: {{ recipient }}</h1>
+        
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <div class="md-form mb-4 pink-textarea active-pink-textarea">
+                {{ form.message(id="post", class="form-control", placeholder="Escreva sua mensagem...", rows="3") }}
+                <p class="text-right mb-0" for="post">
+                    <span id="current">0</span>
+                    <span id="maximum">/ 140</span>
+                </p>
+            </div>
+            <div>
+                {{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
