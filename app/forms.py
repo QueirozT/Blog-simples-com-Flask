@@ -37,3 +37,11 @@ class PostForm(FlaskForm):
         validators=[DataRequired(), Length(min=1, max=200)]
     )
     submit = SubmitField('Enviar')
+
+
+class MessageForm(FlaskForm):
+    message = TextAreaField(
+        'Mensagem', 
+        validators=[DataRequired(), Length(min=1, max=140)]
+    )
+    submit = SubmitField('Enviar')
