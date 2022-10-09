@@ -1,14 +1,14 @@
 from datetime import datetime
 from flask import (
-    Blueprint, current_app, flash, redirect, render_template, 
+    Blueprint, current_app, flash, jsonify, redirect, render_template, 
     request, url_for
 )
 from flask_login import current_user, login_required
 
 from app.forms import (
-    EditProfileForm, EmptyForm, PostForm
+    EditProfileForm, EmptyForm, MessageForm, PostForm
 )
-from app.models import User, Post
+from app.models import  Message, Notification, Post, User 
 
 bp_blog = Blueprint('blog', __name__)
 
@@ -168,3 +168,59 @@ def user_popup(username):
     user = User.query.filter_by(username=username).first_or_404()
     form = EmptyForm()
     return render_template('user_popup.html', user=user, form=form)
+
+
+@bp_blog.route('/send_message/<recipient>', methods=['GET', 'POST'])
+@login_required
+def send_message(recipient):
+    user = User.query.filter_by(username=recipient).first_or_404()
+    form = MessageForm()
+    if form.validate_on_submit():
+        msg = Message(
+            author=current_user, recipient=user, body=form.message.data
+        )
+        current_app.db.session.add(msg)
+        user.add_notification('unread_message_count', user.new_messages())
+        current_app.db.session.commit()
+        flash('Sua mensagem foi enviada!')
+        return redirect(url_for('blog.user', username=recipient))
+    return render_template(
+        'send_message.html', 
+        title='Enviar Mensagem', form=form, recipient=recipient
+    )
+
+
+@bp_blog.route('/messages', methods=['GET'])
+@login_required
+def messages():
+    current_user.last_message_read_time = datetime.utcnow()
+    current_user.add_notification('unread_message_count', 0)
+    current_app.db.session.commit()
+    page = request.args.get('page', 1, type=int)
+    messages = current_user.messages_received.order_by(
+        Message.timestamp.desc()
+    ).paginate(
+        page, current_app.config['POSTS_PER_PAGE'], False
+    )
+    next_url = url_for('blog.messages', page=messages.next_num) \
+        if messages.has_next else None
+    prev_url = url_for('blog.messages', page=messages.prev_num) \
+        if messages.has_prev else None
+    return render_template(
+        'messages.html', 
+        messages=messages.items, next_url=next_url, prev_url=prev_url
+    )
+
+
+@bp_blog.route('/notifications', methods=['GET'])
+@login_required
+def notifications():
+    since = request.args.get('since', 0.0, type=float)
+    notifications = current_user.notifications.filter(
+        Notification.timestamp > since
+    ).order_by(Notification.timestamp.asc())
+    return jsonify([{
+        'name': n.name, 
+        'data': n.get_data(), 
+        'timestamp': n.timestamp
+    } for n in notifications])
