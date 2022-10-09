@@ -51,6 +51,11 @@
                         </form>
                     </p>
                     {% endif %}
+                    {% if user != current_user %}
+                        <p class="mt-2">
+                            <a href="{{ url_for('blog.send_message', recipient=user.username)}}">Enviar uma mensagem</a>
+                        </p>
+                    {% endif %}
                 {% endif %}
             </small>
         </td>

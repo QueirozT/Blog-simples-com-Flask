@@ -1,6 +1,16 @@
-$('textarea').keyup(function() {
+const textarea = $('textarea')
 
-    var characterCount = $(this).val().length,
+
+textarea.keyup( function() {
+    updateCont()
+});
+
+
+textarea.on("load", updateCont());
+
+
+function updateCont() {
+    var characterCount = textarea.val().length,
         current = $('#current'),
         maximum = $('#maximum'),
         theCount = $('#the-count');
@@ -33,5 +43,4 @@ $('textarea').keyup(function() {
     maximum.css('color','#666');
     theCount.css('font-weight','normal');
     }
-
-});
+}
