@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <h1>Mensagens privadas</h1>
+        
+        {% if messages %}
+            {% for post in messages %}
+                {% include "_post.html" %}
+            {% endfor %}
+        {% else %}
+            <p>Você ainda não tem mensagens para exibir...</p>
+        {% endif %}
+    
+        {% include "_nav_posts.html" %}
+    </div>
+
+{% endblock %}
