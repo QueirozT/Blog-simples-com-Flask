@@ -4,7 +4,9 @@
 
     <div class="container mt-4">
         <div class="d-flex justify-content-start align-items-center">
-            <div class="mr-4"><img src="{{ user.avatar(160) }}"></div>
+            <div class="mr-4">
+                <img src="{{ user.avatar(160) }}">
+            </div>
             <div>
                 <h1>{{ user.username }}</h1>
 
@@ -40,6 +42,11 @@
                             {{ form.hidden_tag() }}
                             {{ form.submit(value='Parar de seguir', style="cursor: pointer;", class="btn btn-primary") }}
                         </form>
+                    </p>
+                {% endif %}
+                {% if user != current_user %}
+                    <p class="mt-2">
+                        <a href="{{ url_for('blog.send_message', recipient=user.username)}}">Enviar uma mensagem</a>
                     </p>
                 {% endif %}
             </div>
