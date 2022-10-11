@@ -16,12 +16,12 @@
                     <p>{{ user.about_me }}</p>
                 {% endif %}
                 {% if user.last_seen %}
-                    <p>
+                    <p class="text-nowrap">
                         Visto por último: <br>
                         {{ moment(user.last_seen).calendar(refresh=True) }}
                     </p>
                 {% endif %}
-                <p>
+                <p class="text-nowrap">
                     seguidores {{ user.followers.count() }} - 
                     seguindo {{ user.followed.count() }}
                 </p>
