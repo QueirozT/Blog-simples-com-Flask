@@ -22,57 +22,59 @@ Estou iniciando este projeto para entender melhor como o flask funciona, e aplic
 
 - Poetry:
 
-Eu usei poetry para gerenciar este projeto.
+    Eu usei poetry para gerenciar este projeto.
 
-Se você quiser usar poetry também, basta seguir a documentação oficial deles para instalar em sua plataforma > [Poetry Docs](https://python-poetry.org/docs/#installation).
+    Se você quiser usar poetry também, basta seguir a documentação oficial deles para instalar em sua plataforma > [Poetry Docs](https://python-poetry.org/docs/#installation).
 
-Com o Poetry instalado, basta entrar no diretório clonado deste projeto e rodar:
-```sh
-poetry install
-```
+    Com o Poetry instalado, basta entrar no diretório clonado deste projeto e rodar:
+    ```sh
+    poetry install
+    ```
 
-E para ativar o ambiente virtual:
-```sh
-poetry shell
-```
+    E para ativar o ambiente virtual:
+    ```sh
+    poetry shell
+    ```
 
 - Pip:
 
-Se não quiser usar o poetry, pode instalar o requirements.txt em seu ambiente virtual:
-```sh
-pip install -r requirements.txt
-```
+    Se não quiser usar o poetry, pode instalar o requirements.txt em seu ambiente virtual:
+    ```sh
+    pip install -r requirements.txt
+    ```
 
 ## Como rodar?
 
 ```sh
 python wsgi.py
 ```
-- pode acessa-lo através do endereço: http://localhost:5000
+**pode acessa-lo através do endereço: http://localhost:5000**
 
 ou
 
 ```sh
 gunicorn wsgi:app
 ```
-- pode acessa-lo através do endereço: http://localhost:8000
+**pode acessa-lo através do endereço: http://localhost:8000**
 
 ## Como migrar o banco de dados?
 
-```sh
-flask db init
-flask db migrate
-flask db upgrade
-```
+- OBS: Este projeto está atualmente configurado para usar um banco de dados mysql. Caso queira testar com um banco de dados mais simples como o sqlite, recomendo remover a pasta **migrations** antes de continuar com as etapas abaixo.
 
-## Como acessar a instância do app e testar o banco de dados?
+    ```sh
+    flask db init
+    flask db migrate
+    flask db upgrade
+    ```
 
-Para ter acesso aos recursos do banco de dados e testar, basta usar.
+## Como acessar o contexto do app?
+
+Para ter acesso aos recursos, basta usar:
 ```sh
 flask shell
 ```
 
-A configuração foi predefinida no ```wsgi.py``` o que dá acesso direto as instãncias de "app", "db", "User" e "Post".
+A configuração de contexto foi predefinida no ```wsgi.py``` o que dá acesso direto as instãncias de "app", "db", "User", "Post", "Message" e "Notification".
 ```py
 >>> app
 <Flask 'app'>
@@ -85,6 +87,12 @@ A configuração foi predefinida no ```wsgi.py``` o que dá acesso direto as ins
 
 >>> Post
 <class 'app.models.Post'>
+
+>>> Message
+<class 'app.models.Message'>
+
+>>> Notification
+<class 'app.models.Notification'>
 ```
 
 ## Como rodar um servidor de email local para receber os erros?
@@ -121,34 +129,109 @@ moment('2021-06-28T21:45:23Z').calendar() # "Today at 2:45 PM"
 
 Para começar, o docker precisa estar instalado.
 
-Como este projeto é extremamente simples, montei um esquema de imagem equivalente. tudo que precisa para funcionar é executar os comandos a seguir:
+- Como este projeto é extremamente simples, montei um esquema de imagem equivalente. tudo que precisa para funcionar é executar os comandos a seguir:
 
-1 - Para criar a imagem a partir dos arquivos fornecidos, basta rodar o comando:
-```sh
-docker build -t blog-simples:latest .
-```
+    1 - Para criar a imagem a partir dos arquivos fornecidos, basta rodar o comando:
+    ```sh
+    docker build -t blog-simples:latest .
+    ```
 
-2 - Após criar a imagem, use o comando a baixo para rodar o projeto:
-- Após rodar o projeto, pode acessa-lo através do endereço: http://localhost:8000
+    2 - Após criar a imagem, use o comando a baixo para rodar o projeto:
+    - Após rodar o projeto, pode acessa-lo através do endereço: http://localhost:8000
 
-```sh
-docker run -d --rm --name blog-simples -p 8000:8000 -v $PWD:/home/blog-simples/ blog-simples:latest
-```
+    ```sh
+    docker run -d --rm --name blog-simples -p 8000:8000 -v $PWD:/home/blog-simples/ blog-simples:latest
+    ```
 
-3 - Para ver os logs do servidor, basta usar o comando a baixo ou trocar a flag "-d" por "-it" do segundo comando:
-```sh
-docker logs blog-simples
-```
+    3 - Para ver os logs do servidor, basta usar o comando a baixo ou trocar a flag "-d" por "-it" do comando acima:
+    ```sh
+    docker logs blog-simples
+    ```
 
-4 - Para finalizar a execução, basta usar o comando:
-```sh
-docker stop blog-simples
-```
+    4 - Para finalizar a execução, basta usar o comando:
+    ```sh
+    docker stop blog-simples
+    ```
 
-- Se quiser instalar algum pacote diferente, basta acrescentar ao requirements.txt e rodar o primeiro comando novamente.
+    **Se quiser instalar algum pacote diferente, basta acrescentar ao requirements.txt e rodar o primeiro comando novamente.**
 
 
-Se quiser testar os serviços de email com o docker, basta executar este comando enquanto o projeto estiver rodando:
-```sh
-docker exec -it blog-simples python -m smtpd -n -c DebuggingServer localhost:8025
-```
+    - Se quiser testar os serviços de email com o docker, basta executar este comando em outro terminal enquanto o projeto estiver rodando:
+        ```sh
+        docker exec -it blog-simples python -m smtpd -n -c DebuggingServer localhost:8025
+        ```
+
+## Como usar um banco de dados mysql com docker neste projeto?
+
+Para começar, o docker precisa estar instalado.
+
+- Para rodar apenas o banco de dados com docker:
+
+    1 - Iniciar o container do mysql com as configurações abaixo:
+    ```sh
+    docker run \
+    --rm -d --name mysql \
+    -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+    -e MYSQL_DATABASE=blogsimples \
+    -e MYSQL_USER=blogsimples \
+    -e MYSQL_PASSWORD=blogsimples \
+    -p 3306:3306 \
+    mysql/mysql-server:latest
+    ```
+
+    2 - Configurar o DATABASE_URL no ```.env``` do projeto:
+    ```sh
+    DATABASE_URL = mysql+pymysql://blogsimples:blogsimples@localhost:3306/blogsimples
+    ```
+
+    3 - Fazer as migrações para criar as tabelas no banco de dados:
+    ```sh
+    flask db migrate
+    flask db upgrade
+    ```
+
+    4 - Finalizar o container após o uso:
+    ```sh
+    docker stop mysql
+    ```
+
+- Para rodar o projeto e o banco de dados com docker:
+    
+    1 - Iniciar o container do banco de dados com as configurações abaixo.
+    ```sh
+    docker run \
+    --rm -d --name mysql \
+    -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+    -e MYSQL_DATABASE=blogsimples \
+    -e MYSQL_USER=blogsimples \
+    -e MYSQL_PASSWORD=blogsimples \
+    mysql/mysql-server:latest
+    ```
+
+    2 - Configurar o DATABASE_URL no ```.env``` do projeto:
+    ```sh
+    DATABASE_URL = mysql+pymysql://blogsimples:blogsimples@dbserver/blogsimples
+    ```
+
+    3 - Fazer as migrações para criar as tabelas no banco de dados:
+    ```sh
+    flask db migrate
+    flask db upgrade
+    ```
+
+    4 - Iniciar o container do projeto com as configurações abaixo:
+    
+    - Após rodar o projeto, pode acessa-lo através do endereço: http://localhost:8000
+
+    ```sh
+    docker run \
+    --rm -d -p 8000:8000 --name blog-simples \
+    -v $PWD:/home/blog-simples/ \
+    --link mysql:dbserver \
+    blog-simples:latest
+    ```
+
+    5 - Para finalizar a execução, basta usar o comando:
+    ```sh
+    docker stop blog-simples mysql
+    ```
