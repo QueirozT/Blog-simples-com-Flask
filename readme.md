@@ -17,6 +17,8 @@ Estou iniciando este projeto para entender melhor como o flask funciona, e aplic
 - Flask-Mail - Extensão para trabalhar com emails
 - pyjwt - Biblioteca do python que gera tokens (Json Web Tokens)
 - Flask-Moment - Wrapper da biblioteca moment.js para tratamento de datas
+- Flask-Pagedown - Extensão de formulário para formatar markdown
+- Flask-Markdown - Extensão para renderizar markdown
 
 ## Como instalar as dependências do projeto?
 
