@@ -18,7 +18,7 @@ $(() => {
                                 container: elem,
                                 content: data
                             }).popover('show', {})
-                            elem.children()[1].children[2].innerHTML = data
+                            elem.children()[1].children[1].innerHTML = data
                             flask_moment_render_all();
                         }
                     );
