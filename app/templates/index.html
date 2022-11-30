@@ -1,32 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-    <h1>Olá, {{ current_user.username }}</h1>
-    
-    {% if form %}
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
-            <div class="md-form mb-4 pink-textarea active-pink-textarea">
-                {{ form.post(id="post", class="form-control", placeholder="Escrever um post...", rows="3") }}
-                <p class="text-right mb-0" for="post">
-                    <span id="current">0</span>
-                    <span id="maximum">/ 200</span>
-                </p>
-                {% for error in form.post.errors %}
-                    <span style="color: red;">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <p>{{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}</p>
-        </form>
-    {% endif %}
-
     {% if posts %}
         {% for post in posts %}
             {% include '_post.html' %}
         {% endfor %}
-    {% else %}
-        <p>Você ainda não possui postagens ou seguidores... procure por outros perfis em <a href="{{ url_for('blog.explore') }}">Explorar</a></p>
     {% endif %}
 
     {% include '_nav_posts.html' %}

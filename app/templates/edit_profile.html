@@ -19,13 +19,28 @@
                 <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>
+        <div>
+            {{ form.email.label }} <br>
+            {{ form.email(size=64, class="form-control") }} <br>
+            {% for error in form.email.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
         <div class="md-form mb-4 pink-textarea active-pink-textarea">
             {{ form.about_me.label }} <br>
-            {{ form.about_me(cols=50, rows=4, class="form-control") }}
-            <p class="text-right mb-0" for="post">
-                <span id="current">0</span>
-                <span id="maximum">/ 200</span>
-            </p>
+            <div class="overflow-auto border border-dark rounded-3 border-opacity-25" style="height: 37vh;">
+                {{ form.about_me(only_input=True, class='form-control', placeholder='Editor de Markdown', style="resize: none; height:36.8vh; border: none;") }}
+                {{ form.about_me(only_preview=True) }}
+            </div>
+    
+            <div class="mt-1 d-flex justify-content-end">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="selector" id="escrever" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="escrever">Escrever</label>
+                
+                    <input type="radio" class="btn-check" name="selector" id="visualizar" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="visualizar">Visualizar</label>
+                </div>
             {% for error in form.about_me.errors %}
                 <span style="color: red;">{{ error }}</span>
             {% endfor %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Criar uma nova postagem</h1>
+
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+
+        {{ form.title(class="form-control mt-4", placeholder="Título") }}
+
+        <div class="mt-4 overflow-auto border border-dark rounded-3 border-opacity-25" style="height: 67vh;">
+            {{ form.pagedown(only_input=True, class='form-control', placeholder='Editor de Markdown', style="resize: none; height:66.8vh; border: none;") }}
+            {{ form.pagedown(only_preview=True) }}
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+            {{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}
+
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="selector" id="escrever" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="escrever">Escrever</label>
+            
+                <input type="radio" class="btn-check" name="selector" id="visualizar" autocomplete="off">
+                <label class="btn btn-outline-primary" for="visualizar">Visualizar</label>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

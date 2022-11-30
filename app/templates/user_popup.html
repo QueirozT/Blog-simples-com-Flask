@@ -1,63 +1,25 @@
-<table class="table">
-    <tr>
-        <td width="64" style="border: 0px;">
-            <img src="{{ user.avatar(64) }}" alt="Avatar">
-        </td>
-
-        <td style="border: 0px;">
-            <p>
-                <a href="{{ url_for('blog.user', username=user.username) }}">
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="me-2">
+            <a class="nav-link" href="{{ url_for('blog.user', username=user.username) }}">
+                <img src="{{ user.avatar(64) }}" alt="Foto de Perfil" class="rounded-circle">
+            </a>
+        </div>
+        <small class="d-flex flex-column align-items-center">
+            <h2 class="fw-bold">
+                <a class="nav-link text-nowrap" href="{{ url_for('blog.user', username=user.username) }}">
                     {{ user.username }}
                 </a>
-            </p>
+            </h2>
+            
+            {% if user.last_seen %}
+                <p>Online - {{ moment(user.last_seen).calendar(refresh=True) }}</p>
+            {% endif %}
 
-            <small>
-                {% if user.about_me %}
-                    <p>{{ user.about_me }}</p>
-                {% endif %}
-                {% if user.last_seen %}
-                    <p class="text-nowrap">
-                        Visto por último: <br>
-                        {{ moment(user.last_seen).calendar(refresh=True) }}
-                    </p>
-                {% endif %}
-                <p class="text-nowrap">
-                    seguidores {{ user.followers.count() }} - 
-                    seguindo {{ user.followed.count() }}
-                </p>
-                {% if user != current_user %}
-                    {% if not current_user.is_following(user) %}
-                        <p>
-                            <form action="{{ url_for('blog.follow', username=user.username) }}" method="post">
-                                {{ form.hidden_tag() }}
-                                {{ form.submit(
-                                    value='Seguir', 
-                                    style="cursor: pointer;", 
-                                    class="btn btn-primary btn-sm"
-                                    )
-                                }}
-                            </form>
-                        </p>
-                    {% else %}
-                    <p>
-                        <form action="{{ url_for('blog.unfollow', username=user.username) }}" method="post">
-                            {{ form.hidden_tag() }}
-                            {{ form.submit(
-                                value='Parar de seguir', 
-                                style="cursor: pointer;", 
-                                class="btn btn-primary btn-sm"
-                                ) 
-                            }}
-                        </form>
-                    </p>
-                    {% endif %}
-                    {% if user != current_user %}
-                        <p class="mt-2">
-                            <a href="{{ url_for('blog.send_message', recipient=user.username)}}">Enviar uma mensagem</a>
-                        </p>
-                    {% endif %}
-                {% endif %}
-            </small>
-        </td>
-    </tr>
-</table>
+            <p class="text-nowrap">
+                seguidores <span class="fw-bold">{{ user.followers.count() }}</span> - 
+                seguindo <span class="fw-bold">{{ user.followed.count() }}</span>
+            </p>
+        </small>
+    </div>
+</div>
