@@ -3,51 +3,45 @@
 {% block content %}
 
     <div class="container mt-4">
-        <div class="d-flex justify-content-start align-items-center">
-            <div class="mr-4">
-                <img src="{{ user.avatar(160) }}">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="me-4">
+                <img src="{{ user.avatar(140) }}" alt="Foto de Perfil" class="rounded-circle">
             </div>
-            <div>
+            <div class="d-flex flex-column align-items-center">
                 <h1>{{ user.username }}</h1>
-
-                {% if user.about_me %}
-                    <p>Sobre mim: {{ user.about_me }}</p>
-                {% endif %}
                 
                 {% if user.last_seen %}
-                    <p>Visto por último: {{ moment(user.last_seen).calendar(refresh=True) }}</p>
+                    <p>Online - {{ moment(user.last_seen).calendar(refresh=True) }}</p>
                 {% endif %}
 
                 <p>
-                    seguidores {{ user.followers.count() }} - 
-                    seguindo {{ user.followed.count() }}
+                    seguidores <span class="fw-bold">{{ user.followers.count() }}</span> 
+                    seguindo <span class="fw-bold">{{ user.followed.count() }}</span>
                 </p>
 
-                {% if user == current_user %}
-                    <p>
-                        <a href="{{ url_for('blog.edit_profile') }}">
-                            Editar perfil
+                {% if current_user.is_authenticated %}
+                    {% if user == current_user %}
+                        <a class="nav-link" href="{{ url_for('blog.edit_profile') }}">
+                            <button id="responder" type="button" class="btn btn-outline-secondary">Editar perfil</button>
                         </a>
-                    </p>
-                {% elif not current_user.is_following(user) %}
-                    <p>
+                    {% elif not current_user.is_following(user) %}
                         <form action="{{ url_for('blog.follow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
-                            {{ form.submit(value='Seguir', style="cursor: pointer;", class="btn btn-primary") }}
+                            {{ form.submit(value='Seguir', style="cursor: pointer;", class="btn btn-outline-primary") }}
                         </form>
-                    </p>
-                {% else %}
-                    <p>
+                    {% else %}
                         <form action="{{ url_for('blog.unfollow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
-                            {{ form.submit(value='Parar de seguir', style="cursor: pointer;", class="btn btn-primary") }}
+                            {{ form.submit(value='Deixar de seguir', style="cursor: pointer;", class="btn btn-outline-primary") }}
                         </form>
-                    </p>
+                    {% endif %}
                 {% endif %}
-                {% if user != current_user %}
-                    <p class="mt-2">
-                        <a href="{{ url_for('blog.send_message', recipient=user.username)}}">Enviar uma mensagem</a>
-                    </p>
+            </div>
+        </div>
+        <div class="d-flex flex-column align-items-center text-break">
+            <div>
+                {% if user.about_me %}
+                    <p>{{ user.about_me | markdown }}</p>
                 {% endif %}
             </div>
         </div>

@@ -6,31 +6,22 @@ from flask import (
 from flask_login import current_user, login_required
 
 from app.forms import (
-    EditProfileForm, EmptyForm, MessageForm, PostForm
+    EditProfileForm, EmptyForm, MessageForm, PostForm, ReplyForm
 )
-from app.models import  Message, Notification, Post, User 
+from app.models import Notification, Post, User, Reply
 
 bp_blog = Blueprint('blog', __name__)
 
 
 @bp_blog.route('/', methods=['GET', 'POST'])
 @bp_blog.route('/index', methods=['GET', 'POST'])
-@login_required
 def index():
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
-        current_app.db.session.add(post)
-        current_app.db.session.commit()
-        flash('Seu post foi publicado!')
-        return redirect(url_for('blog.index'))
-    
     page = request.args.get('page', 1, type=int)
 
-    posts = current_user.followed_posts().paginate(
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False
     )
-
+    
     next_url = url_for(
         'blog.index', page=posts.next_num
     ) if posts.has_next else None
@@ -40,13 +31,116 @@ def index():
     ) if posts.has_prev else None
 
     return render_template(
-        'index.html', title='Página Inicial', form=form, 
-        posts=posts.items, next_url=next_url, prev_url=prev_url
+        'index.html', 
+        title='Página Inicial', 
+        posts=posts.items, 
+        next_url=next_url, 
+        prev_url=prev_url
     )
 
 
-@bp_blog.route('/user/<username>', methods=['GET'])
+@bp_blog.route('/destaques', methods=['GET'])
 @login_required
+def destaques():
+    page = request.args.get('page', 1, type=int)
+
+    posts = current_user.followed_posts().paginate(
+        page, current_app.config['POSTS_PER_PAGE'], False
+    )
+
+    next_url = url_for(
+        'blog.destaques', page=posts.next_num
+    ) if posts.has_next else None
+    
+    prev_url = url_for(
+        'blog.destaques', page=posts.prev_num
+    ) if posts.has_prev else None
+
+    return render_template(
+        'index.html', 
+        title='Destaques',
+        posts=posts.items, 
+        next_url=next_url, 
+        prev_url=prev_url
+    )
+
+
+@bp_blog.route('/post_detalhes/<username>/<int:post_id>', methods=['GET', 'POST'])
+def post_detalhes(username, post_id):
+    form = ReplyForm()
+
+    page = request.args.get('page', 1, type=int)
+
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash('Faça login para enviar uma resposta.')
+            return redirect(url_for('auth.login'))
+
+        reply = Reply( 
+            body=form.pagedown.data, 
+            user_id=current_user.id,
+            post_id=post_id
+        )
+        current_app.db.session.add(reply)
+        current_app.db.session.commit()
+        flash('Sua resposta foi publicada!')
+
+    post = User.query.filter_by(username=username).first().posts.filter_by(id=post_id).first()
+    
+    if post and post.replies.count() >= 1:
+        replies = post.replies.order_by(Reply.timestamp.desc()).paginate(
+            page, current_app.config['POSTS_PER_PAGE'], False
+        )
+        
+        next_url = url_for(
+            'blog.post_detalhes', 
+            page=replies.next_num, 
+            username=username, 
+            post_id=post_id
+        ) if replies.has_next else None
+        
+        prev_url = url_for(
+            'blog.index', 
+            page=replies.prev_num, 
+            username=username, 
+            post_id=post_id
+        ) if replies.has_prev else None
+
+        return render_template(
+            'post_detalhes.html', 
+            title='Página Inicial',
+            post=post, 
+            form=form,
+            replies=replies.items, 
+            next_url=next_url, 
+            prev_url=prev_url
+        )
+    
+    return render_template(
+            'post_detalhes.html', title='Destalhes', post=post, form=form
+        )
+
+
+@bp_blog.route('/create_post', methods=['GET', 'POST'])
+@login_required
+def create_post():
+    form = PostForm()
+
+    if form.validate_on_submit():
+        post = Post(
+            title=form.title.data, 
+            body=form.pagedown.data, 
+            author=current_user
+        )
+        current_app.db.session.add(post)
+        current_app.db.session.commit()
+        flash('Seu post foi publicado!')
+        return redirect(url_for('blog.index'))
+
+    return render_template('create_post.html', form=form)
+
+
+@bp_blog.route('/user/<username>', methods=['GET'])
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     
@@ -85,6 +179,7 @@ def edit_profile():
     form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data.strip()
+        current_user.email = form.email.data
         current_user.about_me = form.about_me.data
         current_app.db.session.commit()
         flash('Suas alterações foram salvas!')
@@ -92,6 +187,7 @@ def edit_profile():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
+        form.email.data =  current_user.email
 
     return render_template(
         'edit_profile.html', title='Editar Perfil', form=form
@@ -139,88 +235,8 @@ def unfollow(username):
         return redirect(url_for('blog.index'))
 
 
-@bp_blog.route('/explore', methods=['GET'])
-@login_required
-def explore():
-    page = request.args.get('page', 1, type=int)
-
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page, current_app.config['POSTS_PER_PAGE'], False
-    )
-    
-    next_url = url_for(
-        'blog.explore', page=posts.next_num
-    ) if posts.has_next else None
-    
-    prev_url = url_for(
-        'blog.explore', page=posts.prev_num
-    ) if posts.has_prev else None
-
-    return render_template(
-        'index.html', title='Explorar', posts=posts.items, 
-        next_url=next_url, prev_url=prev_url
-    )
-
-
 @bp_blog.route('/user/<username>/popup', methods=['GET'])
-@login_required
 def user_popup(username):
     user = User.query.filter_by(username=username).first_or_404()
     form = EmptyForm()
     return render_template('user_popup.html', user=user, form=form)
-
-
-@bp_blog.route('/send_message/<recipient>', methods=['GET', 'POST'])
-@login_required
-def send_message(recipient):
-    user = User.query.filter_by(username=recipient).first_or_404()
-    form = MessageForm()
-    if form.validate_on_submit():
-        msg = Message(
-            author=current_user, recipient=user, body=form.message.data
-        )
-        current_app.db.session.add(msg)
-        user.add_notification('unread_message_count', user.new_messages())
-        current_app.db.session.commit()
-        flash('Sua mensagem foi enviada!')
-        return redirect(url_for('blog.user', username=recipient))
-    return render_template(
-        'send_message.html', 
-        title='Enviar Mensagem', form=form, recipient=recipient
-    )
-
-
-@bp_blog.route('/messages', methods=['GET'])
-@login_required
-def messages():
-    current_user.last_message_read_time = datetime.utcnow()
-    current_user.add_notification('unread_message_count', 0)
-    current_app.db.session.commit()
-    page = request.args.get('page', 1, type=int)
-    messages = current_user.messages_received.order_by(
-        Message.timestamp.desc()
-    ).paginate(
-        page, current_app.config['POSTS_PER_PAGE'], False
-    )
-    next_url = url_for('blog.messages', page=messages.next_num) \
-        if messages.has_next else None
-    prev_url = url_for('blog.messages', page=messages.prev_num) \
-        if messages.has_prev else None
-    return render_template(
-        'messages.html', 
-        messages=messages.items, next_url=next_url, prev_url=prev_url
-    )
-
-
-@bp_blog.route('/notifications', methods=['GET'])
-@login_required
-def notifications():
-    since = request.args.get('since', 0.0, type=float)
-    notifications = current_user.notifications.filter(
-        Notification.timestamp > since
-    ).order_by(Notification.timestamp.asc())
-    return jsonify([{
-        'name': n.name, 
-        'data': n.get_data(), 
-        'timestamp': n.timestamp
-    } for n in notifications])

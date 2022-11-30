@@ -1,8 +1,10 @@
 from flask import Flask
 from config import Config
 from flask_babel import Babel
+from flaskext.markdown import Markdown
 from flask_migrate import Migrate
 from flask_moment import Moment
+from flask_pagedown import PageDown
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 from pathlib import Path
@@ -18,6 +20,7 @@ from .models import config as config_db
 babel = Babel()
 migrate = Migrate()
 moment = Moment()
+pagedown = PageDown()
 
 
 def create_app(config_class=Config):
@@ -31,6 +34,12 @@ def create_app(config_class=Config):
 
     # Configurando o flask Moment para tratamento de datas
     moment.init_app(app)
+
+    # Configurando o flask pagedown para criação de Markdown
+    pagedown.init_app(app)
+
+    # Configurando o flask markdown para exibição do Markdown
+    Markdown(app)
 
     # Configurando o Migrate para o SQLAlchemy
     config_db(app)

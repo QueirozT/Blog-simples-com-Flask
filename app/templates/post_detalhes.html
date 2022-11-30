@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container mt-5 rounded-4 border border-dark border-opacity-25 p-2">
+        <div class="d-flex flex-row {% if not post.title %}align-items-center{% endif %}">
+            <div class="me-2">
+                <a href="{{ url_for('blog.user', username=post.author.username) }}">
+                    <img src="{{ post.author.avatar(70) }}" alt="Foto de Perfil" class="rounded-circle">
+                </a>
+            </div>
+            <div>
+                <span class="user_popup d-inline-block">
+                    <a class="nav-link fw-bold fs-5" href="{{ url_for('blog.user', username=post.author.username) }}">
+                        {{ post.author.username }}
+                    </a>
+                </span>
+                {{ moment(post.timestamp).fromNow(refresh=True) }}
+                <h2 class="fw-bold">
+                    {% if post.title %}
+                        {{ post.title }}
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+        <div class="container mt-3">
+            <div>
+                {{ post.body | markdown }}
+            </div>
+        </div>
+        <div class="container mt-3 mb-3">
+            <button id="responder" type="button" class="btn btn-outline-secondary">Responder</button>
+
+            <form id="form_responder" class="d-none" action="" method="post">
+                {{ form.hidden_tag() }}
+        
+                <div class="mt-4 overflow-auto border border-dark rounded-3 border-opacity-25" style="height: 37vh;">
+                    {{ form.pagedown(only_input=True, class='form-control', placeholder='Editor de Markdown', style="resize: none; height:36.8vh; border: none;") }}
+                    {{ form.pagedown(only_preview=True) }}
+                </div>
+        
+                <div class="mt-4 d-flex justify-content-between">
+                    <div class="btn-group btn-group-sm">
+                        {{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}
+                        <button id="cancelar_responder" type="button" class="btn btn-outline-primary">Cancelar</button>
+                    </div>
+        
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="selector" id="escrever" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="escrever">Escrever</label>
+                    
+                        <input type="radio" class="btn-check" name="selector" id="visualizar" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="visualizar">Visualizar</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if replies %}
+        {% for reply in replies %}
+        
+        <div class="container mt-4 border border-dark border-opacity-25 p-2 rounded-4">
+            <div class="d-flex flex-row align-items-center">
+                <div class="me-2">
+                    <a href="{{ url_for('blog.user', username=reply.author.username) }}">
+                        <img src="{{ reply.author.avatar(70) }}" alt="Foto de Perfil" class="rounded-circle">
+                    </a>
+                </div>
+                <div>
+                    <span class="user_popup d-inline-block">
+                        <a class="nav-link fw-bold fs-5" href="{{ url_for('blog.user', username=post.author.username) }}">
+                            {{ reply.author.username }}
+                        </a>
+                    </span>
+                    {{ moment(reply.timestamp).fromNow(refresh=True) }}
+                </div>
+            </div>
+            <div class="container mt-3">
+                {{ reply.body | markdown }}
+            </div>
+        </div>
+
+        {% endfor %}
+    {% endif %}
+
+    {% include '_nav_posts.html' %}
+
+{% endblock %}
