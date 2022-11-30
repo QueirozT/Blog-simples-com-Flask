@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
+from flask_pagedown.fields import PageDownField
 from wtforms import (
     StringField, SubmitField, TextAreaField
 )
 from wtforms.validators import (
-    DataRequired, Length, ValidationError
+    DataRequired, Length, ValidationError, Email
 )
 
 from app.models import User
@@ -11,7 +12,8 @@ from app.models import User
 
 class EditProfileForm(FlaskForm):
     username = StringField('Usuário', validators=[DataRequired()])
-    about_me = TextAreaField('Sobre mim', validators=[Length(min=0, max=200)])
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    about_me = PageDownField('Sobre mim')
     submit = SubmitField('Salvar')
 
     def __init__(self, original_username, *args, **kwargs):
@@ -32,11 +34,14 @@ class EmptyForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    post = TextAreaField(
-        'Conte aos outros o que está pensando!', 
-        validators=[DataRequired(), Length(min=1, max=200)]
-    )
-    submit = SubmitField('Enviar')
+    title = StringField('Informe o título da publicação', validators=[DataRequired()])
+    pagedown = PageDownField(validators=[DataRequired()])
+    submit = SubmitField('Publicar')
+
+
+class ReplyForm(FlaskForm):
+    pagedown = PageDownField(validators=[DataRequired()])
+    submit = SubmitField('Responder')
 
 
 class MessageForm(FlaskForm):
