@@ -17,7 +17,7 @@ def app():
         app.db.session.remove()
 
 
-@fixture(scope='module')
+@fixture(scope='function')
 def client():
     app = create_app(TestConfig)
     
