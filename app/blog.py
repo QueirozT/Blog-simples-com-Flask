@@ -71,21 +71,7 @@ def post_detalhes(username, post_id):
 
     page = request.args.get('page', 1, type=int)
 
-    if form.validate_on_submit():
-        if not current_user.is_authenticated:
-            flash('Faça login para enviar uma resposta.')
-            return redirect(url_for('auth.login'))
-
-        reply = Reply( 
-            body=form.pagedown.data, 
-            user_id=current_user.id,
-            post_id=post_id
-        )
-        current_app.db.session.add(reply)
-        current_app.db.session.commit()
-        flash('Sua resposta foi publicada!')
-
-    post = User.query.filter_by(username=username).first().posts.filter_by(id=post_id).first()
+    post = User.query.filter_by(username=username).first_or_404().posts.filter_by(id=post_id).first_or_404()
     
     if post and post.replies.count() >= 1:
         replies = post.replies.order_by(Reply.timestamp.desc()).paginate(
@@ -108,7 +94,7 @@ def post_detalhes(username, post_id):
 
         return render_template(
             'post_detalhes.html', 
-            title='Página Inicial',
+            title='Detalhes',
             post=post, 
             form=form,
             replies=replies.items, 
@@ -119,6 +105,34 @@ def post_detalhes(username, post_id):
     return render_template(
             'post_detalhes.html', title='Destalhes', post=post, form=form
         )
+
+
+@bp_blog.route('/create_reply/<username>/<int:post_id>', methods=['POST'])
+def create_reply(username, post_id):
+    form = ReplyForm()
+
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash('Faça login para enviar uma resposta.')
+            return redirect(url_for('auth.login'))
+
+        post = Post.query.filter_by(id=post_id).first_or_404()
+        
+        reply = Reply( 
+            body=form.pagedown.data, 
+            author=current_user,
+            answered=post
+        )
+        current_app.db.session.add(reply)
+        current_app.db.session.commit()
+        flash('Sua resposta foi publicada!')
+
+    return redirect(url_for(
+        'blog.post_detalhes', 
+        username=username, 
+        post_id=post_id
+    ))
+
 
 
 @bp_blog.route('/create_post', methods=['GET', 'POST'])
@@ -176,7 +190,7 @@ def before_request():
 @bp_blog.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm(current_user.username)
+    form = EditProfileForm(current_user.username, current_user.email)
     if form.validate_on_submit():
         current_user.username = form.username.data.strip()
         current_user.email = form.email.data
