@@ -16,9 +16,10 @@ class EditProfileForm(FlaskForm):
     about_me = PageDownField('Sobre mim')
     submit = SubmitField('Salvar')
 
-    def __init__(self, original_username, *args, **kwargs):
+    def __init__(self, original_username, original_email, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
         self.original_username = original_username
+        self.original_email  =  original_email
 
     def validate_username(self, username):
         if username.data != self.original_username:
@@ -26,6 +27,14 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError(
                     'Por favor, use um nome de usuário diferente.'
+                )
+    
+    def validate_email(self, email):
+        if email.data !=  self.original_email:
+            user = User.query.filter_by(email=self.email.data).first()
+            if user is not None:
+                raise ValidationError(
+                    'Por favor, use um e-mail diferente.'
                 )
 
 

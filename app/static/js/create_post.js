@@ -15,9 +15,6 @@ VISUALIZAR = document.querySelector('.flask-pagedown-preview')
 VISUALIZAR.classList.add('p-2')
 VISUALIZAR.classList.add('d-none')
 
-LIMPAR = document.querySelector('#flask-pagedown-pagedown')
-LIMPAR.value = null 
-
 RESPONDER = document.querySelector('#responder')
 
 RESPONDER.addEventListener('click', function(e) {
