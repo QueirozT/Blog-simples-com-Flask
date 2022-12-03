@@ -1,7 +1,7 @@
 from flask import Flask
 from config import Config
 from flask_babel import Babel
-from flaskext.markdown import Markdown
+from flask_misaka import Misaka
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_pagedown import PageDown
@@ -21,7 +21,17 @@ babel = Babel()
 migrate = Migrate()
 moment = Moment()
 pagedown = PageDown()
-
+misaka = Misaka(
+    no_html=True, 
+    fenced_code=True, 
+    underline=True,
+    highlight=True,
+    quote=True,
+    no_indented_code=True,
+    space_headers=True,
+    strikethrough=True,
+    tables=True,
+)
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -38,8 +48,8 @@ def create_app(config_class=Config):
     # Configurando o flask pagedown para criação de Markdown
     pagedown.init_app(app)
 
-    # Configurando o flask markdown para exibição do Markdown
-    Markdown(app)
+    # Configurando o flask misaka para exibição do Markdown
+    misaka.init_app(app)
 
     # Configurando o Migrate para o SQLAlchemy
     config_db(app)
