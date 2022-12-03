@@ -17,14 +17,22 @@ VISUALIZAR.classList.add('d-none')
 
 RESPONDER = document.querySelector('#responder')
 
-RESPONDER.addEventListener('click', function(e) {
-    document.querySelector('#form_responder').classList.remove('d-none')
-    document.querySelector('#responder').classList.add('d-none')
-})
+if (RESPONDER) {
+    RESPONDER.addEventListener('click', function(e) {
+        document.querySelector('#form_responder').classList.remove('d-none')
+        document.querySelector('#responder').classList.add('d-none')
+    })
+}
 
 CANCELAR_RESPONDER = document.querySelector('#cancelar_responder')
 
-CANCELAR_RESPONDER.addEventListener('click', function(e) {
-    document.querySelector('#form_responder').classList.add('d-none')
-    document.querySelector('#responder').classList.remove('d-none')
+if (CANCELAR_RESPONDER) {
+    CANCELAR_RESPONDER.addEventListener('click', function(e) {
+        document.querySelector('#form_responder').classList.add('d-none')
+        document.querySelector('#responder').classList.remove('d-none')
+    })
+}
+
+document.querySelectorAll('img').forEach(function(e){
+    e.classList.add('img-fluid')
 })

@@ -254,3 +254,36 @@ def user_popup(username):
     user = User.query.filter_by(username=username).first_or_404()
     form = EmptyForm()
     return render_template('user_popup.html', user=user, form=form)
+
+
+@bp_blog.route('/remover/post/<int:post_id>')
+@login_required
+def remover_post(post_id):
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    
+    if post.author == current_user:
+        post.replies.delete()
+        Post.query.filter_by(id=post_id).delete()
+        current_app.db.session.commit()
+        flash('Post removido com sucesso!')
+    
+    return redirect(url_for('blog.index'))
+        
+
+@bp_blog.route('/remover/reply/<int:reply_id>')
+@login_required
+def remover_reply(reply_id):
+    reply = Reply.query.filter_by(id=reply_id).first_or_404()
+
+    post = reply.answered
+
+    if current_user == reply.author:
+        Reply.query.filter_by(id=reply_id).delete()
+        current_app.db.session.commit()
+        flash('Resposta removida com sucesso!')
+
+    return redirect(url_for(
+        'blog.post_detalhes', 
+        username=post.author.username, 
+        post_id=post.id
+    ))
