@@ -197,3 +197,159 @@ def test_rota_user_popup_deve_retornar_uma_miniatura_do_perfil(client):
     assert response.status_code == 200
     assert esperado in response.text
     assert '/user/xpto' in response.text
+
+
+def test_rota_remover_post_deve_redirecionar_para_login_quando_nao_autenticado(client):
+    user = User(username='xpto', email='xpto@email.com')
+    post = Post(
+        title='postagem', body='uma postagem', user_id=1
+    )
+    reply = Reply(
+        body='uma resposta', author=user, answered=post
+    )
+
+    db.session.add_all([user, post, reply])
+    db.session.commit()
+
+    posts = Post.query.count()
+    replies = Reply.query.count()
+
+    response =  client.get(url_for('blog.remover_post', post_id=post.id))
+
+    esperado = 'You should be redirected automatically to the target URL: <a href="/auth/login?next=%2Fremover%2Fpost%2F1">/auth/login?next=%2Fremover%2Fpost%2F1</a>'
+
+    assert response.status_code == 302
+    assert esperado in response.text
+    assert Post.query.count() == posts
+    assert Reply.query.count() == replies
+
+
+def test_rota_remover_post_deve_remover_o_post_e_os_replies_quando_autenticado(client):
+    user = User(username='xpto', email='xpto@email.com')
+    post = Post(
+        title='postagem', body='uma postagem', user_id=1
+    )
+    reply = Reply(
+        body='uma resposta', author=user, answered=post
+    )
+
+    db.session.add_all([user, post, reply])
+    db.session.commit()
+    login_user(user)
+
+    posts = Post.query.count()
+    replies = Reply.query.count()
+
+    response =  client.get(url_for('blog.remover_post', post_id=post.id))
+
+    esperado = 'You should be redirected automatically to the target URL: <a href="/index">/index</a>'
+
+    assert response.status_code == 302
+    assert esperado in response.text
+    assert Post.query.count() < posts
+    assert Reply.query.count() < replies
+
+
+def test_rota_remover_post_nao_deve_fazer_nada_quando_o_usuario_for_diferente(client):
+    user = User(username='xpto', email='xpto@email.com')
+    outro_user = User(username='todo', email='todo@email.com')
+    post = Post(
+        title='postagem', body='uma postagem', user_id=1
+    )
+    reply = Reply(
+        body='uma resposta', author=user, answered=post
+    )
+
+    db.session.add_all([user, post, reply])
+    db.session.commit()
+    login_user(outro_user)
+
+    posts = Post.query.count()
+    replies = Reply.query.count()
+
+    response =  client.get(url_for('blog.remover_post', post_id=post.id))
+
+    esperado = 'You should be redirected automatically to the target URL: <a href="/index">/index</a>'
+
+    assert response.status_code == 302
+    assert esperado in response.text
+    assert Post.query.count() == posts
+    assert Reply.query.count() == replies
+
+
+def test_rota_remover_reply_deve_redirecionar_para_login_quando_nao_autenticado(client):
+    user = User(username='xpto', email='xpto@email.com')
+    post = Post(
+        title='postagem', body='uma postagem', user_id=1
+    )
+    reply = Reply(
+        body='uma resposta', author=user, answered=post
+    )
+
+    db.session.add_all([user, post, reply])
+    db.session.commit()
+
+    posts = Post.query.count()
+    replies = Reply.query.count()
+
+    response =  client.get(url_for('blog.remover_reply', reply_id=reply.id))
+
+    esperado = 'You should be redirected automatically to the target URL: <a href="/auth/login?next=%2Fremover%2Freply%2F1">/auth/login?next=%2Fremover%2Freply%2F1</a>'
+
+    assert response.status_code == 302
+    assert esperado in response.text
+    assert Post.query.count() == posts
+    assert Reply.query.count() == replies
+
+
+def test_rota_remover_post_deve_remover_o_post_e_os_replies_quando_autenticado(client):
+    user = User(username='xpto', email='xpto@email.com')
+    post = Post(
+        title='postagem', body='uma postagem', user_id=1
+    )
+    reply = Reply(
+        body='uma resposta', author=user, answered=post
+    )
+
+    db.session.add_all([user, post, reply])
+    db.session.commit()
+    login_user(user)
+
+    posts = Post.query.count()
+    replies = Reply.query.count()
+
+    response =  client.get(url_for('blog.remover_reply', reply_id=reply.id))
+
+    esperado = 'You should be redirected automatically to the target URL: <a href="/post_detalhes/xpto/1">/post_detalhes/xpto/1</a>'
+
+    assert response.status_code == 302
+    assert esperado in response.text
+    assert Post.query.count() == posts
+    assert Reply.query.count() < replies
+
+
+def test_rota_remover_post_nao_deve_fazer_nada_quando_o_usuario_for_diferente(client):
+    user = User(username='xpto', email='xpto@email.com')
+    outro_user = User(username='todo', email='todo@email.com')
+    post = Post(
+        title='postagem', body='uma postagem', user_id=1
+    )
+    reply = Reply(
+        body='uma resposta', author=user, answered=post
+    )
+
+    db.session.add_all([user, post, reply])
+    db.session.commit()
+    login_user(outro_user)
+
+    posts = Post.query.count()
+    replies = Reply.query.count()
+
+    response =  client.get(url_for('blog.remover_reply', reply_id=reply.id))
+
+    esperado = 'You should be redirected automatically to the target URL: <a href="/post_detalhes/xpto/1">/post_detalhes/xpto/1</a>'
+
+    assert response.status_code == 302
+    assert esperado in response.text
+    assert Post.query.count() == posts
+    assert Reply.query.count() == replies
