@@ -2,88 +2,152 @@
 
 {% block content %}
 
-    <div class="container mt-5 rounded-4 border border-dark border-opacity-25 p-2">
-        <div class="d-flex flex-row {% if not post.title %}align-items-center{% endif %}">
+<div class="container mt-5 rounded-4 border border-dark border-opacity-25 p-2">
+    <div class="d-flex flex-row justify-content-between align-items-center">
+        <div class="d-flex flex-row align-items-center">
             <div class="me-2">
                 <a href="{{ url_for('blog.user', username=post.author.username) }}">
                     <img src="{{ post.author.avatar(70) }}" alt="Foto de Perfil" class="rounded-circle">
                 </a>
             </div>
-            <div>
+            <div class="gap-2">
                 <span class="user_popup d-inline-block">
                     <a class="nav-link fw-bold fs-5" href="{{ url_for('blog.user', username=post.author.username) }}">
                         {{ post.author.username }}
                     </a>
                 </span>
                 {{ moment(post.timestamp).fromNow(refresh=True) }}
-                <h2 class="fw-bold">
-                    {% if post.title %}
-                        {{ post.title }}
-                    {% endif %}
-                </h2>
             </div>
         </div>
-        <div class="container mt-3">
-            <div>
-                {{ post.body | markdown }}
+        {% if current_user == post.author %}
+            <div class="btn-group dropstart btn-outline-light">
+                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="btn">
+                    <svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 16 16" width="16" height="16"
+                        fill="currentColor"
+                        style="display: inline-block; user-select: none; vertical-align: text-bottom; overflow: visible;">
+                        <path
+                            d="M8 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM1.5 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm13 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z">
+                        </path>
+                    </svg>
+                </button>
+                <ul class="text-center dropdown-menu">
+                    <li class="dropdown-item">
+                        <a class="nav-link" href="{{ url_for('blog.remover_post', post_id=post.id) }}">
+                        <span>
+                            <svg aria-hidden="true" focusable="false" role="img"
+                                class="octicon octicon-trash" viewBox="0 0 16 16" width="16" height="16" fill="red">
+                                <path fill-rule="evenodd"
+                                    d="M6.5 1.75a.25.25 0 01.25-.25h2.5a.25.25 0 01.25.25V3h-3V1.75zm4.5 0V3h2.25a.75.75 0 010 1.5H2.75a.75.75 0 010-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75zM4.496 6.675a.75.75 0 10-1.492.15l.66 6.6A1.75 1.75 0 005.405 15h5.19c.9 0 1.652-.681 1.741-1.576l.66-6.6a.75.75 0 00-1.492-.149l-.66 6.6a.25.25 0 01-.249.225h-5.19a.25.25 0 01-.249-.225l-.66-6.6z">
+                                </path>
+                            </svg>
+                        </span>
+                        <span style="color:red;">remover</span>
+                    </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div class="container mt-3 mb-3">
-            <button id="responder" type="button" class="btn btn-outline-secondary">Responder</button>
-
-            <form id="form_responder" class="d-none" action="{{ url_for('blog.create_reply', username=post.author.username, post_id=post.id) }}" method="post">
-                {{ form.hidden_tag() }}
-        
-                <div class="mt-4 overflow-auto border border-dark rounded-3 border-opacity-25" style="height: 37vh;">
-                    {{ form.pagedown(only_input=True, class='form-control', placeholder='Editor de Markdown', style="resize: none; height:36.8vh; border: none;") }}
-                    {{ form.pagedown(only_preview=True) }}
-                </div>
-        
-                <div class="mt-4 d-flex justify-content-between">
-                    <div class="btn-group btn-group-sm">
-                        {{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}
-                        <button id="cancelar_responder" type="button" class="btn btn-outline-primary">Cancelar</button>
-                    </div>
-        
-                    <div class="btn-group btn-group-sm" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="selector" id="escrever" autocomplete="off" checked>
-                        <label class="btn btn-outline-primary" for="escrever">Escrever</label>
-                    
-                        <input type="radio" class="btn-check" name="selector" id="visualizar" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="visualizar">Visualizar</label>
-                    </div>
-                </div>
-            </form>
+        {% endif %}
+    </div>
+    <div class="container mt-2 d-flex">
+        <h2 class="fw-bold text-justify">
+            {% if post.title %}
+            {{ post.title }}
+            {% endif %}
+        </h2>
+    </div>
+    <div class="container mt-3">
+        <div>
+            {{ post.body | markdown }}
         </div>
     </div>
+    <div class="container mt-3 mb-3">
+        <button id="responder" type="button" class="btn btn-outline-secondary">Responder</button>
 
-    {% if replies %}
-        {% for reply in replies %}
-        
-        <div class="container mt-4 border border-dark border-opacity-25 p-2 rounded-4">
-            <div class="d-flex flex-row align-items-center">
-                <div class="me-2">
-                    <a href="{{ url_for('blog.user', username=reply.author.username) }}">
-                        <img src="{{ reply.author.avatar(70) }}" alt="Foto de Perfil" class="rounded-circle">
-                    </a>
+        <form id="form_responder" class="d-none"
+            action="{{ url_for('blog.create_reply', username=post.author.username, post_id=post.id) }}" method="post">
+            {{ form.hidden_tag() }}
+
+            <div class="mt-4 overflow-auto border border-dark rounded-3 border-opacity-25" style="height: 37vh;">
+                {{ form.pagedown(only_input=True, class='form-control', placeholder='Editor de Markdown', style="resize:
+                none; height:36.8vh; border: none;") }}
+                {{ form.pagedown(only_preview=True) }}
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between">
+                <div class="btn-group btn-group-sm">
+                    {{ form.submit(style="cursor: pointer;", class="btn btn-primary") }}
+                    <button id="cancelar_responder" type="button" class="btn btn-outline-primary">Cancelar</button>
                 </div>
-                <div>
-                    <span class="user_popup d-inline-block">
-                        <a class="nav-link fw-bold fs-5" href="{{ url_for('blog.user', username=reply.author.username) }}">
-                            {{ reply.author.username }}
-                        </a>
-                    </span>
-                    {{ moment(reply.timestamp).fromNow(refresh=True) }}
+
+                <div class="btn-group btn-group-sm" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="selector" id="escrever" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="escrever">Escrever</label>
+
+                    <input type="radio" class="btn-check" name="selector" id="visualizar" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="visualizar">Visualizar</label>
                 </div>
             </div>
-            <div class="container mt-3">
-                {{ reply.body | markdown }}
+        </form>
+    </div>
+</div>
+
+{% if replies %}
+{% for reply in replies %}
+
+<div class="container mt-4 border border-dark border-opacity-25 p-2 rounded-4">
+    <div class="d-flex flex-row align-items-center justify-content-between">
+        <div class="d-flex flex-row align-items-center">
+            <div class="me-2">
+                <a href="{{ url_for('blog.user', username=reply.author.username) }}">
+                    <img src="{{ reply.author.avatar(70) }}" alt="Foto de Perfil" class="rounded-circle">
+                </a>
+            </div>
+            <div class="gap-2">
+                <span class="user_popup d-inline-block">
+                    <a class="nav-link fw-bold fs-5" href="{{ url_for('blog.user', username=reply.author.username) }}">
+                        {{ reply.author.username }}
+                    </a>
+                </span>
+                {{ moment(reply.timestamp).fromNow(refresh=True) }}
             </div>
         </div>
+        {% if current_user == reply.author %}
+            <div class="btn-group dropstart btn-outline-light">
+                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="btn">
+                    <svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 16 16" width="16" height="16"
+                        fill="currentColor"
+                        style="display: inline-block; user-select: none; vertical-align: text-bottom; overflow: visible;">
+                        <path
+                            d="M8 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM1.5 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm13 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z">
+                        </path>
+                    </svg>
+                </button>
+                <ul class="text-center dropdown-menu">
+                    <li class="dropdown-item">
+                        <a class="nav-link" href="{{ url_for('blog.remover_reply', reply_id=reply.id) }}">
+                        <span>
+                            <svg aria-hidden="true" focusable="false" role="img"
+                                class="octicon octicon-trash" viewBox="0 0 16 16" width="16" height="16" fill="red">
+                                <path fill-rule="evenodd"
+                                    d="M6.5 1.75a.25.25 0 01.25-.25h2.5a.25.25 0 01.25.25V3h-3V1.75zm4.5 0V3h2.25a.75.75 0 010 1.5H2.75a.75.75 0 010-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75zM4.496 6.675a.75.75 0 10-1.492.15l.66 6.6A1.75 1.75 0 005.405 15h5.19c.9 0 1.652-.681 1.741-1.576l.66-6.6a.75.75 0 00-1.492-.149l-.66 6.6a.25.25 0 01-.249.225h-5.19a.25.25 0 01-.249-.225l-.66-6.6z">
+                                </path>
+                            </svg>
+                        </span>
+                        <span style="color:red;">remover</span>
+                    </a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+    <div class="container mt-3">
+        {{ reply.body | markdown }}
+    </div>
+</div>
 
-        {% endfor %}
-    {% endif %}
+{% endfor %}
+{% endif %}
 
-    {% include '_nav_posts.html' %}
+{% include '_nav_posts.html' %}
 
 {% endblock %}
