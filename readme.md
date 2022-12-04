@@ -76,7 +76,7 @@ Para ter acesso aos recursos, basta usar:
 flask shell
 ```
 
-A configuração de contexto foi predefinida no ```wsgi.py``` o que dá acesso direto as instãncias de "app", "db", "User", "Post", "Message" e "Notification".
+A configuração de contexto foi predefinida no ```wsgi.py``` o que dá acesso direto as instãncias de "app", "db", "User", "Post" e "Reply".
 ```py
 >>> app
 <Flask 'app'>
@@ -90,11 +90,8 @@ A configuração de contexto foi predefinida no ```wsgi.py``` o que dá acesso d
 >>> Post
 <class 'app.models.Post'>
 
->>> Message
-<class 'app.models.Message'>
-
->>> Notification
-<class 'app.models.Notification'>
+>>> Reply
+<class 'app.models.Reply'>
 ```
 
 ## Como rodar um servidor de email local para receber os erros?
