@@ -31,8 +31,7 @@ def index():
     ) if posts.has_prev else None
 
     return render_template(
-        'index.html', 
-        title='Página Inicial', 
+        'index.html',
         posts=posts.items, 
         next_url=next_url, 
         prev_url=prev_url
@@ -94,7 +93,7 @@ def post_detalhes(username, post_id):
 
         return render_template(
             'post_detalhes.html', 
-            title='Detalhes',
+            title='Detalhes da Postagem',
             post=post, 
             form=form,
             replies=replies.items, 
@@ -103,7 +102,10 @@ def post_detalhes(username, post_id):
         )
     
     return render_template(
-            'post_detalhes.html', title='Destalhes', post=post, form=form
+            'post_detalhes.html', 
+            title='Detalhes da Postagem', 
+            post=post, 
+            form=form
         )
 
 
@@ -128,8 +130,8 @@ def create_reply(username, post_id):
         flash('Sua resposta foi publicada!')
 
     return redirect(url_for(
-        'blog.post_detalhes', 
-        username=username, 
+        'blog.post_detalhes',
+        username=username,
         post_id=post_id
     ))
 
@@ -151,7 +153,11 @@ def create_post():
         flash('Seu post foi publicado!')
         return redirect(url_for('blog.index'))
 
-    return render_template('create_post.html', form=form)
+    return render_template(
+        'create_post.html', 
+        title='Nova Postagem', 
+        form=form
+    )
 
 
 @bp_blog.route('/user/<username>', methods=['GET'])
@@ -175,8 +181,13 @@ def user(username):
     form = EmptyForm()
 
     return render_template(
-        'user.html', user=user, posts=posts.items, form=form,
-        next_url=next_url, prev_url=prev_url
+        'user.html', 
+        title='Perfil', 
+        user=user, 
+        posts=posts.items, 
+        form=form,
+        next_url=next_url, 
+        prev_url=prev_url
     )
 
 
@@ -204,7 +215,9 @@ def edit_profile():
         form.email.data =  current_user.email
 
     return render_template(
-        'edit_profile.html', title='Editar Perfil', form=form
+        'edit_profile.html', 
+        title='Editar Perfil', 
+        form=form
     )
 
 
@@ -265,7 +278,7 @@ def remover_post(post_id):
         post.replies.delete()
         Post.query.filter_by(id=post_id).delete()
         current_app.db.session.commit()
-        flash('Post removido com sucesso!')
+        flash('Postagem removida com sucesso!')
     
     return redirect(url_for('blog.index'))
         
