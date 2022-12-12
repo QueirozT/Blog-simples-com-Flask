@@ -14,6 +14,7 @@ ESCREVER.parentNode.addEventListener('click', function(e) {
 VISUALIZAR = document.querySelector('.flask-pagedown-preview')
 VISUALIZAR.classList.add('p-2')
 VISUALIZAR.classList.add('d-none')
+VISUALIZAR.classList.add('text-break')
 
 RESPONDER = document.querySelector('#responder')
 
